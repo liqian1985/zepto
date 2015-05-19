@@ -1,0 +1,35 @@
+{
+  "name": "zepto-study",
+  "version": "0.0.1",
+  "description": "study zepto",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "karma": "^0.12.31"
+  },
+  "devDependencies": {
+    "jasmine-core": "^2.3.4",
+    "karma": "^0.12.31",
+    "karma-chrome-launcher": "^0.1.12",
+    "karma-firefox-launcher": "^0.1.6",
+    "karma-ie-launcher": "^0.1.5",
+    "karma-jasmine": "^0.3.5",
+    "karma-opera-launcher": "^0.1.0",
+    "karma-safari-launcher": "^0.1.1"
+  },
+  "scripts": {
+    "test": "./node_modules/karma/bin/karma start zepto.conf.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liqian1985/zepto.git"
+  },
+  "author": "liqian",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liqian1985/zepto/issues"
+  },
+  "homepage": "https://github.com/liqian1985/zepto#readme"
+}
