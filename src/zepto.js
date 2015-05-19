@@ -1,4 +1,4 @@
-（function (slice) {
+(function (slice) {
     var $ = function (_) {
         if (typeof _ == 'function') {
             $.dom.forEach(_);
@@ -13,7 +13,7 @@
             if (idx === undefined) {
                 return $.dom;
             } else {
-                return $.dom.[idx];
+                return $.dom[idx];
             }
         },
         html: function (html) {
