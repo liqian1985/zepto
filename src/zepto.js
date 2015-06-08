@@ -1,17 +1,33 @@
-function $(selector) {
-    $.dom = [].slice.apply(document.querySelectorAll(selector));
+function $(_) {
+    if (typeof _ == 'function') {
+        $.dom.forEach(_);
+    } else {
+        $.dom = [].slice.apply(document.querySelectorAll(_));
+    }
     return $;
 }
 
 $.html = function (html) {
-    $.dom.forEach(function (el) {
+    $(function (el) {
         el.innerHTML = html;
     });
     return $;
 }
+$.append = function (html) {
+    $(function (el) {
+        el.insertAdjacentHTML('beforeEnd', html);
+    });
+    return $;
+}
+$.prepend = function (html) {
+    $(function (el) {
+        el.insertAdjacentHTML('afterBegin', html);
+    });
+    return $;
+}
 $.css = function (style) {
-    $.dom.forEach(function (el) {
-        el.style.cssText = ';' + style;
+    $(function (el) {
+        el.style.cssText += ';' + style;
     });
     return $;
 }
