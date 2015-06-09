@@ -23,6 +23,15 @@ describe('zepto suite text', function () {
         })
     });
 
+    describe('$.fn.get() suite text', function () {
+        it('验证$.fn.get() 方法', function () {
+            var result = $('div');
+            expect(result.get).toEqual(jasmine.any(Function));
+            expect(result.get(0)).toBe(div);
+            expect(result.get(1).innerHTML).toBe('innerdiv');
+        });
+    });
+
     describe('$.html suite text', function () {
         it ('验证$函数返回值中包含html方法', function () {
             var result = $('div');
@@ -80,5 +89,4 @@ describe('zepto suite text', function () {
             expect($.dom[0].parentNode.id).toBe('text');
         });
     });
-
 });
