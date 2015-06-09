@@ -16,10 +16,10 @@ describe('zepto suite text', function () {
         it ('验证$函数返回值中包含dom数组属性', function () {
             var result = $('div');
 
-            expect(result.dom).toEqual(jasmine.any(Array));
-            expect(result.dom.length).toBe(2);
-            expect(result.dom[0]).toBe(div);
-            expect(result.dom[1].innerHTML).toBe('innerdiv');
+            expect($.dom).toEqual(jasmine.any(Array));
+            expect($.dom.length).toBe(2);
+            expect($.dom[0]).toBe(div);
+            expect($.dom[1].innerHTML).toBe('innerdiv');
         })
     });
 
@@ -27,9 +27,9 @@ describe('zepto suite text', function () {
         it ('验证$函数返回值中包含html方法', function () {
             var result = $('div');
             result.html('123');
-            expect(result.html).toEqual(jasmine.any(Function));
-            expect(result.dom[0].innerHTML).toBe('123');
-            expect(result.dom[1].innerHTML).toBe('123');
+            expect($.fn.html).toEqual(jasmine.any(Function));
+            expect($.dom[0].innerHTML).toBe('123');
+            expect($.dom[1].innerHTML).toBe('123');
         });
     });
 
@@ -38,20 +38,20 @@ describe('zepto suite text', function () {
             var result = $('div');
             result.css('width:100px');
             result.css('font-size:12px');
-            expect(result.css).toEqual(jasmine.any(Function));
-            expect(result.dom[0].style.width).toBe('100px');
-            expect(result.dom[0].style.fontSize).toBe('12px');
-            expect(result.dom[1].style.fontSize).toBe('12px');
+            expect($.fn.css).toEqual(jasmine.any(Function));
+            expect($.dom[0].style.width).toBe('100px');
+            expect($.dom[0].style.fontSize).toBe('12px');
+            expect($.dom[1].style.fontSize).toBe('12px');
         });
     });
     describe('链式语法', function () {
         it ('测试$方法返回值的链式语法', function () {
             var result = $('div');
             result.html('456').css('height:100px');
-            expect(result.dom[0].innerHTML).toBe('456');
-            expect(result.dom[1].innerHTML).toBe('456');
-            expect(result.dom[0].style.height).toBe('100px');
-            expect(result.dom[1].style.height).toBe('100px');
+            expect($.dom[0].innerHTML).toBe('456');
+            expect($.dom[1].innerHTML).toBe('456');
+            expect($.dom[0].style.height).toBe('100px');
+            expect($.dom[1].style.height).toBe('100px');
         });
     });
     describe('$.append suite text', function () {
@@ -60,10 +60,11 @@ describe('zepto suite text', function () {
                 appendB;
             result.append('<b class="app">appendHTML</b>');
             appendB = $('b');
-            expect(appendB.dom.length).toBe(2);
-            expect(appendB.dom[0].innerHTML).toBe('appendHTML');
-            expect(appendB.dom[1].innerHTML).toBe('appendHTML');
-            expect(appendB.dom[1].parentNode.id).toBe('text');
+            expect($.fn.append).toEqual(jasmine.any(Function));
+            expect($.dom.length).toBe(2);
+            expect($.dom[0].innerHTML).toBe('appendHTML');
+            expect($.dom[1].innerHTML).toBe('appendHTML');
+            expect($.dom[1].parentNode.id).toBe('text');
         });
     });
     describe('$.prepend suite text', function () {
@@ -72,10 +73,11 @@ describe('zepto suite text', function () {
             prependB;
             result.prepend('<b>prependHTML</b>');
             prependB = $('b');
-            expect(prependB.dom.length).toBe(2);
-            expect(prependB.dom[0].innerHTML).toBe('prependHTML');
-            expect(prependB.dom[1].innerHTML).toBe('prependHTML');
-            expect(prependB.dom[0].parentNode.id).toBe('text');
+            expect($.fn.prepend).toEqual(jasmine.any(Function));
+            expect($.dom.length).toBe(2);
+            expect($.dom[0].innerHTML).toBe('prependHTML');
+            expect($.dom[1].innerHTML).toBe('prependHTML');
+            expect($.dom[0].parentNode.id).toBe('text');
         });
     });
 

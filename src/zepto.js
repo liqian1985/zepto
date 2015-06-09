@@ -4,30 +4,37 @@ function $(_) {
     } else {
         $.dom = [].slice.apply(document.querySelectorAll(_));
     }
-    return $;
+    return $.fn;
+}
+$.fn = {
+    get: function (idx) {
+        if (idx === 'undefined') {
+            return $.dom;
+        } else {
+            return $.dom[idx];
+        }
+    },
+    html: function (html) {
+        return $(function (el) {
+            el.innerHTML = html;
+        });
+    },
+    append: function (html) {
+        return $(function (el) {
+            el.insertAdjacentHTML('beforeEnd', html);
+        });
+    },
+    prepend: function (html) {
+        return $(function (el) {
+            el.insertAdjacentHTML('afterBegin', html);
+        });
+    },
+    css: function (style) {
+        return $(function (el) {
+            el.style.cssText += ';' + style;
+        });
+    }
+
 }
 
-$.html = function (html) {
-    $(function (el) {
-        el.innerHTML = html;
-    });
-    return $;
-}
-$.append = function (html) {
-    $(function (el) {
-        el.insertAdjacentHTML('beforeEnd', html);
-    });
-    return $;
-}
-$.prepend = function (html) {
-    $(function (el) {
-        el.insertAdjacentHTML('afterBegin', html);
-    });
-    return $;
-}
-$.css = function (style) {
-    $(function (el) {
-        el.style.cssText += ';' + style;
-    });
-    return $;
-}
+
