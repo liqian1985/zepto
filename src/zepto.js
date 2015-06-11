@@ -2,6 +2,7 @@ function $(_) {
     if (typeof _ == 'function') {
         $.dom.forEach(_);
     } else {
+        $._ = _;
         $.dom = [].slice.apply(document.querySelectorAll(_));
     }
     return $.fn;
@@ -33,6 +34,31 @@ $.fn = {
         return $(function (el) {
             el.style.cssText += ';' + style;
         });
+    },
+    anim: function (transform, opacity, dur) {
+        var opa;
+        if (opacity === 0) {
+            opa = 0;
+        } else {
+            opa = opacity || 1;
+        }
+        return $.fn.css('-webkit-transition:all' + (dur || 0.5) + 's' +
+            '-webkit-transform:' + transform +
+            ';opcity' + opa);
+    },
+    live: function (event, callback) {
+        var selector = $._;
+        document.body.addEventListener(event, function (event) {
+            var target = event.target,
+                nodes = [].slice.prototype.apply(document.querySelectorAll(selector));
+            while (target && nodes.indexof(target) < 0) {
+                target = target.parentNode;
+            }
+            if (target && !(target === document)) {
+                callback.call(target, event);
+            }
+        }, false);
+        return $.fn;
     }
 };
 (function () {

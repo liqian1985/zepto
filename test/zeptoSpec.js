@@ -32,7 +32,7 @@ describe('zepto suite text', function () {
         });
     });
 
-    describe('$.html suite text', function () {
+    describe('html suite text', function () {
         it ('验证$函数返回值中包含html方法', function () {
             var result = $('div');
             result.html('123');
@@ -63,12 +63,10 @@ describe('zepto suite text', function () {
             expect($.dom[1].style.height).toBe('100px');
         });
     });
-    describe('$.append suite text', function () {
+    describe('append suite text', function () {
         it ('验证$方法返回值中包含append方法', function () {
-            var result = $('div'),
-                appendB;
+            var result = $('div');
             result.append('<b class="app">appendHTML</b>');
-            appendB = $('b');
             expect($.fn.append).toEqual(jasmine.any(Function));
             expect($.dom.length).toBe(2);
             expect($.dom[0].innerHTML).toBe('appendHTML');
@@ -76,17 +74,18 @@ describe('zepto suite text', function () {
             expect($.dom[1].parentNode.id).toBe('text');
         });
     });
-    describe('$.prepend suite text', function () {
+    describe('prepend suite text', function () {
         it('验证$方法返回值中包含prepend方法', function () {
-            var result = $('div'),
-            prependB;
+            var result = $('div');
             result.prepend('<b>prependHTML</b>');
-            prependB = $('b');
             expect($.fn.prepend).toEqual(jasmine.any(Function));
             expect($.dom.length).toBe(2);
             expect($.dom[0].innerHTML).toBe('prependHTML');
             expect($.dom[1].innerHTML).toBe('prependHTML');
             expect($.dom[0].parentNode.id).toBe('text');
         });
+    });
+    describe('', function () {
+
     });
 });
