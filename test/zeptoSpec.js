@@ -85,7 +85,7 @@ describe('zepto suite text', function () {
             expect($.dom[0].parentNode.id).toBe('text');
         });
     });
-    describe('', function () {
+     //describe('', function () {
 
-    });
+    //});
 });

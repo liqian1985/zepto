@@ -50,8 +50,8 @@ $.fn = {
         var selector = $._;
         document.body.addEventListener(event, function (event) {
             var target = event.target,
-                nodes = [].slice.prototype.apply(document.querySelectorAll(selector));
-            while (target && nodes.indexof(target) < 0) {
+                nodes = [].slice.apply(document.querySelectorAll(selector));
+            while (target && nodes.indexOf(target) < 0) {
                 target = target.parentNode;
             }
             if (target && !(target === document)) {

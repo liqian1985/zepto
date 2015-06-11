@@ -13,9 +13,14 @@
 </head>
 <body>
 <div id="demo"></div>
-<script type="javascript" src="../src/zepto.js" />
-<script type="javascript">
-    $('div').anim('rotate(45deg)', '0.5', '10');
+<button>点我旋转</button>
+<script type="text/javascript" src="../src/zepto.js"></script>
+<script type="text/javascript">
+      var btn = document.getElementsByTagName('button')[0];
+      btn.onclick = function () {
+          alert('00');
+          $('div').anim('rotate(720deg)', 0.5, 10);
+      }
 </script>
 </body>
 </html>
