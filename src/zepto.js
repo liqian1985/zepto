@@ -1,67 +1,67 @@
-function $(_) {
-    if (typeof _ == 'function') {
-        $.dom.forEach(_);
-    } else {
-        $._ = _;
-        $.dom = [].slice.apply(document.querySelectorAll(_));
-    }
-    return $.fn;
-}
-$.fn = {
-    get: function (idx) {
-        if (idx === 'undefined') {
-            return $.dom;
+(function (slice) {
+    function $(_) {
+        if (typeof _ == 'function') {
+            $.dom.forEach(_);
         } else {
-            return $.dom[idx];
+            $._ = _;
+            $.dom = slice.call(document.querySelectorAll(_));
         }
-    },
-    html: function (html) {
-        return $(function (el) {
-            el.innerHTML = html;
-        });
-    },
-    append: function (html) {
-        return $(function (el) {
-            el.insertAdjacentHTML('beforeEnd', html);
-        });
-    },
-    prepend: function (html) {
-        return $(function (el) {
-            el.insertAdjacentHTML('afterBegin', html);
-        });
-    },
-    css: function (style) {
-        return $(function (el) {
-            el.style.cssText += ';' + style;
-        });
-    },
-    anim: function (transform, opacity, dur) {
-        var opa;
-        if (opacity === 0) {
-            opa = 0;
-        } else {
-            opa = opacity || 1;
-        }
-        return $.fn.css('-webkit-transition:all' + (dur || 0.5) + 's' +
-            '-webkit-transform:' + transform +
-            ';opcity' + opa);
-    },
-    live: function (event, callback) {
-        var selector = $._;
-        document.body.addEventListener(event, function (event) {
-            var target = event.target,
-                nodes = [].slice.apply(document.querySelectorAll(selector));
-            while (target && nodes.indexOf(target) < 0) {
-                target = target.parentNode;
-            }
-            if (target && !(target === document)) {
-                callback.call(target, event);
-            }
-        }, false);
         return $.fn;
     }
-};
-(function () {
+    $.fn = {
+        get: function (idx) {
+            if (idx === 'undefined') {
+                return $.dom;
+            } else {
+                return $.dom[idx];
+            }
+        },
+        html: function (html) {
+            return $(function (el) {
+                el.innerHTML = html;
+            });
+        },
+        append: function (html) {
+            return $(function (el) {
+                el.insertAdjacentHTML('beforeEnd', html);
+            });
+        },
+        prepend: function (html) {
+            return $(function (el) {
+                el.insertAdjacentHTML('afterBegin', html);
+            });
+        },
+        css: function (style) {
+            return $(function (el) {
+                el.style.cssText += ';' + style;
+            });
+        },
+        anim: function (transform, opacity, dur) {
+            var opa;
+            if (opacity === 0) {
+                opa = 0;
+            } else {
+                opa = opacity || 1;
+            }
+            return $.fn.css('-webkit-transition:all' + (dur || 0.5) + 's' +
+                '-webkit-transform:' + transform +
+                ';opcity' + opa);
+        },
+        live: function (event, callback) {
+            var selector = $._;
+            document.body.addEventListener(event, function (event) {
+                var target = event.target,
+                    nodes = slice.call(document.querySelectorAll(selector));
+                while (target && nodes.indexOf(target) < 0) {
+                    target = target.parentNode;
+                }
+                if (target && !(target === document)) {
+                    callback.call(target, event);
+                }
+            }, false);
+            return $.fn;
+        }
+    };
     function ajax(mothod, url, success) {
         var r = new XMLHttpRequest();
         r.onreadystatechange = function () {
@@ -83,6 +83,6 @@ $.fn = {
             success(JSON.parse(json));
         });
     };
-})();
-
+    this.$ = $;
+})([].slice);
 

@@ -65,8 +65,10 @@ describe('zepto suite text', function () {
     });
     describe('append suite text', function () {
         it ('验证$方法返回值中包含append方法', function () {
-            var result = $('div');
+            var result = $('div'),
+                appendB;
             result.append('<b class="app">appendHTML</b>');
+            appendB = $('b');
             expect($.fn.append).toEqual(jasmine.any(Function));
             expect($.dom.length).toBe(2);
             expect($.dom[0].innerHTML).toBe('appendHTML');
@@ -76,8 +78,10 @@ describe('zepto suite text', function () {
     });
     describe('prepend suite text', function () {
         it('验证$方法返回值中包含prepend方法', function () {
-            var result = $('div');
+            var result = $('div'),
+            prependB;
             result.prepend('<b>prependHTML</b>');
+            prependB = $('b');
             expect($.fn.prepend).toEqual(jasmine.any(Function));
             expect($.dom.length).toBe(2);
             expect($.dom[0].innerHTML).toBe('prependHTML');
@@ -85,7 +89,7 @@ describe('zepto suite text', function () {
             expect($.dom[0].parentNode.id).toBe('text');
         });
     });
-     //describe('', function () {
+    describe('', function () {
 
-    //});
+    });
 });
