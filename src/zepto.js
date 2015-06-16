@@ -8,30 +8,33 @@ var $ = (function () {
             after: 'afterEnd'
         };
     function $(_) {
-        if (typeof _ == 'function') {
-            $.dom.forEach(_);
-        } else {
-            $.dom = slice.call(document.querySelectorAll($._ = _));
+        function fn(_){
+            arguments.callee.dom.forEach(_);
+            return arguments.callee;
         }
-        return $.fn;
+        fn.dom = slice.call(document.querySelectorAll(fn.selector = _));
+        for (k in $.fn) {
+            fn[k] = $.fn[k];
+        }
+        return fn;
     }
     $.fn = {
         get: function (idx) {
             if (idx === 'undefined') {
-                return $.dom;
+                return this.dom;
             } else {
-                return $.dom[idx];
+                return this.dom[idx];
             }
         },
 
         html: function (html) {
-            return $(function (el) {
+            return this(function (el) {
                 el.innerHTML = html;
             });
         },
 
         css: function (style) {
-            return $(function (el) {
+            return this(function (el) {
                 el.style.cssText += ';' + style;
             });
         },
@@ -43,16 +46,15 @@ var $ = (function () {
             } else {
                 opa = opacity || 1;
             }
-            return $.fn.css('-webkit-transition:all' + (dur || 0.5) + 's' +
+            return this.css('-webkit-transition:all' + (dur || 0.5) + 's' +
                 '-webkit-transform:' + transform +
                 ';opcity' + opa);
         },
 
         live: function (event, callback) {
-            var selector = $._;
             document.body.addEventListener(event, function (event) {
                 var target = event.target,
-                    nodes = slice.call(document.querySelectorAll(selector));
+                    nodes = slice.call(document.querySelectorAll(this.selector));
                 while (target && nodes.indexOf(target) < 0) {
                     target = target.parentNode;
                 }
@@ -60,16 +62,15 @@ var $ = (function () {
                     callback.call(target, event);
                 }
             }, false);
-            return $.fn;
+            return this;
         }
     };
 
     for (k in ADJ_OPS) {
         $.fn[k] = (function(op){
             return function(html) {
-                return $(function (el) {
-                    console.log(op);
-                    el.insertAdjacentHTML(op,html);
+                return this(function (el) {
+                    el.insertAdjacentHTML(op, html);
                 });
             };
         })(ADJ_OPS[k]);
@@ -78,7 +79,7 @@ var $ = (function () {
     function ajax(mothod, url, success) {
         var r = new XMLHttpRequest();
         r.onreadystatechange = function () {
-            if (r.readyState == 4 && r.status == 200) {
+            if (r.readyState == 4 && (r.status == 200 || r.status == 0)) {
                 success(r.responseText);
             };
         };
