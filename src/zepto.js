@@ -12,7 +12,13 @@ var $ = (function () {
             arguments.callee.dom.forEach(_);
             return arguments.callee;
         }
-        fn.dom = slice.call(document.querySelectorAll(fn.selector = _));
+
+        if (_ instanceof Element) {
+            fn.dom = [_];
+        } else {
+            fn.dom = slice.call(document.querySelectorAll(fn.selector = _));
+        }
+
         for (k in $.fn) {
             fn[k] = $.fn[k];
         }
@@ -73,6 +79,21 @@ var $ = (function () {
                 }
             }, false);
             return this;
+        },
+
+        delegate: function(selector, event, callback) {
+            return this(function (el) {
+                el.addEventListener(event, function (event) {
+                    var target = event.target,
+                        nodes = slice.call(el.querySelectorAll(selector));
+                    while (target && nodes.indexOf(target) < 0) {
+                        target = target.parentNode;
+                    }
+                    if (target && !(target === el) && !(target === document)) {
+                        callback.call(target, event);
+                    }
+                }, false);
+            });
         }
     };
 
