@@ -4,6 +4,7 @@ describe('zepto suite text', function () {
     beforeEach(function () {
         div = document.createElement('div');
         div.id = 'text';
+        div.setAttribute('name', 'box');
         div.innerHTML = "<p>text</p><p>text</p><div>innerdiv</div>";
         document.body.appendChild(div);
     });
@@ -39,6 +40,18 @@ describe('zepto suite text', function () {
             expect($.fn.html).toEqual(jasmine.any(Function));
             expect(result.dom[0].innerHTML).toBe('123');
             expect(result.dom[1].innerHTML).toBe('123');
+        });
+    });
+
+    describe('attr suite text', function () {
+        it ('验证$函数返回值中包含attr方法', function () {
+            var result = $('div');
+            result.attr('data', '123');
+            expect($.fn.attr).toEqual(jasmine.any(Function));
+            expect(result.attr('name')).toBe('box');
+            expect(result.dom[0].getAttribute('name')).toBe('box');
+            expect(result.dom[0].getAttribute('data')).toBe('123');
+            expect(result.dom[1].getAttribute('data')).toBe('123');
         });
     });
 

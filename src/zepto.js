@@ -33,6 +33,15 @@ var $ = (function () {
             });
         },
 
+        attr: function(name, value){
+            if (value === undefined) {
+                return this.dom[0].getAttribute(name) || undefined;
+            }
+            return this(function (el) {
+                el.setAttribute(name, value);
+            });
+        },
+
         css: function (style) {
             return this(function (el) {
                 el.style.cssText += ';' + style;
@@ -52,9 +61,10 @@ var $ = (function () {
         },
 
         live: function (event, callback) {
+            var selector = this.selector;
             document.body.addEventListener(event, function (event) {
                 var target = event.target,
-                    nodes = slice.call(document.querySelectorAll(this.selector));
+                    nodes = slice.call(document.querySelectorAll(selector));
                 while (target && nodes.indexOf(target) < 0) {
                     target = target.parentNode;
                 }
