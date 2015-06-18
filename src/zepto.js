@@ -1,4 +1,4 @@
-var $ = (function () {
+var $ = (function (d) {
     var slice = [].slice,
         k,
         ADJ_OPS = {
@@ -16,7 +16,8 @@ var $ = (function () {
         if (_ instanceof Element) {
             fn.dom = [_];
         } else {
-            fn.dom = slice.call(document.querySelectorAll(fn.selector = _));
+            fn.selector = _;
+            fn.dom = slice.call(d.querySelectorAll(fn.selector));
         }
 
         for (k in $.fn) {
@@ -30,7 +31,7 @@ var $ = (function () {
     }
 
     $.fn = {
-        get: function (idx) {
+        get: function(idx) {
             if (idx === 'undefined') {
                 return this.dom;
             } else {
@@ -38,28 +39,45 @@ var $ = (function () {
             }
         },
 
-        html: function (html) {
+        remove: function() {
             return this(function (el) {
-                el.innerHTML = html;
+                el.parentNode.removeChild(el);
             });
         },
 
-        attr: function(name, value){
+        each: function(callback) {
+            return this(function (e) {
+                callback.call(e);
+            });
+        },
+
+        html: function(html) {
+            if (html === undefined) {
+                return this.dom[0].innerHTML;
+            } else {
+                return this(function (el) {
+                    el.innerHTML = html;
+                });
+            }
+        },
+
+        attr: function(name, value) {
             if (value === undefined) {
                 return this.dom[0].getAttribute(name) || undefined;
+            } else {
+                return this(function (el) {
+                    el.setAttribute(name, value);
+                });
             }
-            return this(function (el) {
-                el.setAttribute(name, value);
-            });
         },
 
-        css: function (style) {
+        css: function(style) {
             return this(function (el) {
                 el.style.cssText += ';' + style;
             });
         },
 
-        anim: function (transform, opacity, dur) {
+        anim: function(transform, opacity, dur) {
             var opa;
             if (opacity === 0) {
                 opa = 0;
@@ -71,7 +89,7 @@ var $ = (function () {
                 ';opcity' + opa);
         },
 
-        live: function (event, callback) {
+        live: function(event, callback) {
             var selector = this.selector;
             document.body.addEventListener(event, function (event) {
                 var target = event.target,
@@ -94,19 +112,19 @@ var $ = (function () {
                     while (target && nodes.indexOf(target) < 0) {
                         target = target.parentNode;
                     }
-                    if (target && !(target === el) && !(target === document)) {
+                    if (target && !(target === el) && !(target === d)) {
                         callback.call(target, event);
                     }
                 }, false);
             });
         },
-        addClass: function (name) {
+        addClass: function(name) {
             return this(function (el) {
                 !classRE(name).test(el.className)
                     && (el.className += (el.className ? ' ' : '') + name);
             });
         },
-        removeClass: function (name) {
+        removeClass: function(name) {
             return this(function (el) {
                 el.className = el.className.replace(classRE(name), ' ').replace(/^\s+|\s+$/g, '');
             });
@@ -145,5 +163,5 @@ var $ = (function () {
         });
     };
     return $;
-})();
+})(document);
 

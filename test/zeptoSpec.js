@@ -6,7 +6,7 @@ describe('zepto suite text', function () {
         div.id = 'text';
         div.className = "test0";
         div.setAttribute('name', 'box');
-        div.innerHTML = "<p>text</p><p>text</p><div class='test1'>innerdiv</div>";
+        div.innerHTML = "<p><span>text</span></p><p>text</p><div class='test1'>innerdiv</div>";
         document.body.appendChild(div);
     });
 
@@ -26,11 +26,32 @@ describe('zepto suite text', function () {
     });
 
     describe('$.fn.get() suite text', function () {
-        it('验证$.fn.get() 方法', function () {
+        it('验证$.fn.get()方法', function () {
             var result = $('div');
             expect(result.get).toEqual(jasmine.any(Function));
             expect(result.get(0)).toBe(div);
             expect(result.get(1).innerHTML).toBe('innerdiv');
+        });
+    });
+
+    describe('$.fn.remove() suite text', function () {
+        it('验证$.fn.remove()方法', function () {
+            var result = $('p');
+            result.remove('span');
+            expect($.fn.remove).toEqual(jasmine.any(Function));
+            expect($('span').dom.length).toBe(0);
+        });
+    });
+
+    describe('$.fn.each() suite text', function () {
+        it('验证$.fn.each方法', function () {
+            var result = $('div');
+            result.each(function () {
+                $(this).html('123');
+            });
+            expect($.fn.each).toEqual(jasmine.any(Function));
+            expect(result.dom[0].innerHTML).toBe('123');
+            expect(result.dom[1].innerHTML).toBe('123');
         });
     });
 
