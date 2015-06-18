@@ -24,6 +24,11 @@ var $ = (function () {
         }
         return fn;
     }
+
+    function classRE(name) {
+        return new RegExp("(^|\\s)" + name + "(\\s|$)");
+    }
+
     $.fn = {
         get: function (idx) {
             if (idx === 'undefined') {
@@ -93,6 +98,17 @@ var $ = (function () {
                         callback.call(target, event);
                     }
                 }, false);
+            });
+        },
+        addClass: function (name) {
+            return this(function (el) {
+                !classRE(name).test(el.className)
+                    && (el.className += (el.className ? ' ' : '') + name);
+            });
+        },
+        removeClass: function (name) {
+            return this(function (el) {
+                el.className = el.className.replace(classRE(name), ' ').replace(/^\s+|\s+$/g, '');
             });
         }
     };

@@ -4,8 +4,9 @@ describe('zepto suite text', function () {
     beforeEach(function () {
         div = document.createElement('div');
         div.id = 'text';
+        div.className = "test0";
         div.setAttribute('name', 'box');
-        div.innerHTML = "<p>text</p><p>text</p><div>innerdiv</div>";
+        div.innerHTML = "<p>text</p><p>text</p><div class='test1'>innerdiv</div>";
         document.body.appendChild(div);
     });
 
@@ -100,6 +101,29 @@ describe('zepto suite text', function () {
             expect(prependB.dom[0].innerHTML).toBe('prependHTML');
             expect(prependB.dom[1].innerHTML).toBe('prependHTML');
             expect(prependB.dom[0].parentNode.id).toBe('text');
+        });
+    });
+
+    describe('addClass suite text', function () {
+        it('验证$方法返回值中包含addClass方法', function () {
+            var result = $('div');
+            result.addClass('test');
+            expect($.fn.addClass).toEqual(jasmine.any(Function));
+            expect(result.dom.length).toBe(2);
+            expect(result.dom[0].className).toBe('test0 test');
+            expect(result.dom[1].className).toBe('test1 test');
+        });
+    });
+
+    describe('removeClass suite text', function () {
+        it('验证$方法返回值中包含removeClass方法', function () {
+            var result = $('div');
+            result.removeClass('test0');
+            expect($.fn.removeClass).toEqual(jasmine.any(Function));
+            expect(result.dom.length).toBe(2);
+            expect(result.dom[0].className).toBe('');
+            expect(result.dom[1].className).toBe('test1');
+
         });
     });
     describe("mocking ajax", function() {
