@@ -110,6 +110,16 @@ var $ = (function (d) {
             });
         },
 
+        offset: function() {
+            var obj = this.dom[0].getBoundingClientRect();
+            return {
+                left: obj.left + document.body.scrollLeft,
+                top: obj.top + document.body.scrollTop,
+                width: obj.width,
+                height: obj.height
+            };
+        },
+
         index: function(target) {
             return this.dom.indexOf($(target).get(0));
         },

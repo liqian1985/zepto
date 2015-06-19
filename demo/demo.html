@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>测试demo</title>
+    <style>
+        #anim-demo {
+            width: 50px;
+            height: 50px;
+            background: #F00;
+        }
+    </style>
+</head>
+<body>
+<div id="demo">
+    <div id="bind-demo">
+        <p>
+            <button>测试按钮</button>
+        </p>
+        <p>测试文案</p>
+
+        <button>anim测试按钮</button>
+        <div id="anim-demo"></div>
+    </div>
+</div>
+<script type="text/javascript" src="../src/zepto.js"></script>
+<script type="text/javascript">
+    //live 方法的 demo
+    $('button').live('click', function (event) {
+        alert(event.target);
+    });
+    //delegate 方法的 demo
+    $('div').delegate('button', 'click', function (event) {
+        alert(event.target);
+    });
+    //bind 方法的 demo
+    $('p').bind('click dbclick', function () {
+        var $this = $(this);
+        alert($this.html());
+    });
+    //anim 方法的 demo
+    $('button').bind('click', function () {
+        $('#anim-demo').anim('rotate(720deg)', 0.5, 10);
+    });
+</script>
+</body>
+</html>

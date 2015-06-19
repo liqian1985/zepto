@@ -14,7 +14,7 @@ describe('zepto suite text', function () {
         document.body.removeChild(div);
     });
 
-    describe('$ suite text', function () {
+    describe('fn.dom suite text', function () {
         it ('验证$函数返回值中包含dom数组属性', function () {
             var result = $('div'),
                 arrayResult = [1, 2, 3];
@@ -104,6 +104,15 @@ describe('zepto suite text', function () {
             expect(result.dom[0].style.width).toBe('100px');
             expect(result.dom[0].style.fontSize).toBe('12px');
             expect(result.dom[1].style.fontSize).toBe('12px');
+        });
+    });
+
+    describe('offset suite text', function () {
+        it('验证offset方法', function () {
+            var result = $('div');
+
+            expect($.fn.offset).toEqual(jasmine.any(Function));
+            //expect(result.offset.left).toBe('0px');
         });
     });
 
