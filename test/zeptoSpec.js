@@ -71,6 +71,8 @@ describe('zepto suite text', function () {
         it ('验证$函数返回值中包含attr方法', function () {
             var result = $('div');
             result.attr('data', '123');
+            expect($('p').attr('data')).toBe(undefined);
+            expect($('i').attr('data')).toBe(null);
             expect($.fn.attr).toEqual(jasmine.any(Function));
             expect(result.attr('name')).toBe('box');
             expect(result.dom[0].getAttribute('name')).toBe('box');

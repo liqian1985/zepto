@@ -66,11 +66,21 @@ var $ = (function (d) {
         },
 
         attr: function(name, value) {
-            if (value === void 0) {
-                return this.dom[0].getAttribute(name) || undefined;
+            if (typeof name == 'string' && value === void 0) {
+                if (this.dom.length > 0) {
+                    return this.dom[0].getAttribute(name) || undefined;
+                } else {
+                    return null;
+                }
             } else {
-                return this(function (el) {
-                    el.setAttribute(name, value);
+                this(function (el) {
+                    if (typeof name == 'object') {
+                        for (k in name) {
+                            return el.setAttribute(k, name[k]);
+                        }
+                    } else {
+                        return el.setAttribute(name, value);
+                    }
                 });
             }
         },
@@ -140,7 +150,7 @@ var $ = (function (d) {
     };
 
     for (k in ADJ_OPS) {
-        $.fn[k] = (function(op){
+        $.fn[k] = (function (op) {
             return function(html) {
                 return this(function (el) {
                     el['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](op, html);
