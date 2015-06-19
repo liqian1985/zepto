@@ -9,8 +9,8 @@ var $ = (function (d) {
         };
     function $(_) {
         function fn(_){
-            arguments.callee.dom.forEach(_);
-            return arguments.callee;
+            fn.dom.forEach(_);
+            return fn;
         }
 
         if (_ instanceof Element) {
@@ -53,7 +53,11 @@ var $ = (function (d) {
 
         html: function(html) {
             if (html === void 0) {
-                return this.dom[0].innerHTML;
+                if (this.dom.length > 0) {
+                    return this.dom[0].innerHTML;
+                } else {
+                    return null;
+                }
             } else {
                 return this(function (el) {
                     el.innerHTML = html;
@@ -139,7 +143,7 @@ var $ = (function (d) {
         $.fn[k] = (function(op){
             return function(html) {
                 return this(function (el) {
-                    el.insertAdjacentHTML(op, html);
+                    el['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](op, html);
                 });
             };
         })(ADJ_OPS[k]);

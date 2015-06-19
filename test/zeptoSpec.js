@@ -57,11 +57,13 @@ describe('zepto suite text', function () {
 
     describe('html suite text', function () {
         it ('验证$函数返回值中包含html方法', function () {
-            var result = $('div');
+            var result = $('div'),
+                $span = $('span');
             result.html('123');
             expect($.fn.html).toEqual(jasmine.any(Function));
             expect(result.dom[0].innerHTML).toBe('123');
             expect(result.dom[1].innerHTML).toBe('123');
+            expect($span.html()).toBe('text');
         });
     });
 
