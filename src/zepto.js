@@ -32,7 +32,7 @@ var $ = (function (d) {
 
     $.fn = {
         get: function(idx) {
-            if (idx === 'undefined') {
+            if (idx === void 0) {
                 return this.dom;
             } else {
                 return this.dom[idx];
@@ -52,7 +52,7 @@ var $ = (function (d) {
         },
 
         html: function(html) {
-            if (html === undefined) {
+            if (html === void 0) {
                 return this.dom[0].innerHTML;
             } else {
                 return this(function (el) {
@@ -62,7 +62,7 @@ var $ = (function (d) {
         },
 
         attr: function(name, value) {
-            if (value === undefined) {
+            if (value === void 0) {
                 return this.dom[0].getAttribute(name) || undefined;
             } else {
                 return this(function (el) {
