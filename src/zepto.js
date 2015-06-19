@@ -7,13 +7,18 @@ var $ = (function (d) {
             before: 'beforeBegin',
             after: 'afterEnd'
         };
-    function $(_) {
+    function $(_, context) {
+        if (context !== void 0) {
+            return $(context).find(_);
+        }
         function fn(_){
             fn.dom.forEach(_);
             return fn;
         }
 
-        if (_ instanceof Array) {
+        if (typeof _ == 'function' && 'dom' in _) {
+            fn.dom = _.dom;
+        } else if (_ instanceof Array) {
             fn.dom = _;
         } else if (_ instanceof Element) {
             fn.dom = [_];
@@ -106,7 +111,7 @@ var $ = (function (d) {
         },
 
         index: function(target) {
-            return [].indexOf.call(this.dom, $(target).get(0));
+            return this.dom.indexOf($(target).get(0));
         },
 
         anim: function(transform, opacity, dur) {

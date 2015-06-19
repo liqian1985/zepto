@@ -16,12 +16,16 @@ describe('zepto suite text', function () {
 
     describe('$ suite text', function () {
         it ('验证$函数返回值中包含dom数组属性', function () {
-            var result = $('div');
+            var result = $('div'),
+                arrayResult = [1, 2, 3];
 
             expect(result.dom).toEqual(jasmine.any(Array));
             expect(result.dom.length).toBe(2);
             expect(result.dom[0]).toBe(div);
             expect(result.dom[1].innerHTML).toBe('innerdiv');
+
+            expect(arrayResult.length).toBe(3);
+            expect(arrayResult).toEqual(jasmine.any(Array));
         })
     });
 
