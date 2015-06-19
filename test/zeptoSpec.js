@@ -88,6 +88,19 @@ describe('zepto suite text', function () {
             expect(result.dom[1].style.fontSize).toBe('12px');
         });
     });
+
+    describe('index suite text', function () {
+        it('验证$函数返回值中包含index方法', function () {
+            var result = $('p');
+            result.each(function () {
+                $(this).html(result.index(this));
+            });
+            expect($.fn.index).toEqual(jasmine.any(Function));
+            expect(result.dom[0].innerHTML).toBe('0');
+            expect(result.dom[1].innerHTML).toBe('1');
+        });
+    });
+
     describe('链式语法', function () {
         it ('测试$方法返回值的链式语法', function () {
             var result = $('div');

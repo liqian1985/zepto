@@ -77,6 +77,10 @@ var $ = (function (d) {
             });
         },
 
+        index: function(target) {
+            return [].indexOf.call(this.dom, $(target).get(0));
+        },
+
         anim: function(transform, opacity, dur) {
             var opa;
             if (opacity === 0) {
