@@ -43,7 +43,7 @@ describe('zepto suite text', function () {
         });
     });
 
-    describe('$.fn.each() suite text', function () {
+    describe('each() suite text', function () {
         it('验证$.fn.each方法', function () {
             var result = $('div');
             result.each(function () {
@@ -52,6 +52,16 @@ describe('zepto suite text', function () {
             expect($.fn.each).toEqual(jasmine.any(Function));
             expect(result.dom[0].innerHTML).toBe('123');
             expect(result.dom[1].innerHTML).toBe('123');
+        });
+    });
+
+    describe('find suite text', function () {
+        it('验证$.fn.find 方法', function () {
+            var result = $('div'),
+                result2 = result.find('p');
+            expect($.fn.find).toEqual(jasmine.any(Function));
+            expect(result2.dom.length).toBe(2);
+            expect(typeof(result2.dom)).toBe('object');
         });
     });
 

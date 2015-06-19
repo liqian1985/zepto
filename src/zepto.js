@@ -13,7 +13,9 @@ var $ = (function (d) {
             return fn;
         }
 
-        if (_ instanceof Element) {
+        if (_ instanceof Array) {
+            fn.dom = _;
+        } else if (_ instanceof Element) {
             fn.dom = [_];
         } else {
             fn.selector = _;
@@ -28,6 +30,10 @@ var $ = (function (d) {
 
     function classRE(name) {
         return new RegExp("(^|\\s)" + name + "(\\s|$)");
+    }
+
+    function elSelect(el, selector) {
+        return slice.call(el.querySelectorAll(selector));
     }
 
     $.fn = {
@@ -49,6 +55,14 @@ var $ = (function (d) {
             return this(function (e) {
                 callback.call(e);
             });
+        },
+
+        find: function(selector) {
+            return $(this.dom.map(function (el) {
+                return elSelect(el, selector) })
+                    .reduce(function (a, b) {
+                        return a.concat(b) }, [])
+            );
         },
 
         html: function(html) {
@@ -134,7 +148,7 @@ var $ = (function (d) {
             return this(function (el) {
                 el.addEventListener(event, function (event) {
                     var target = event.target,
-                        nodes = slice.call(el.querySelectorAll(selector));
+                        nodes = elSelect(el, selector);
                     while (target && nodes.indexOf(target) < 0) {
                         target = target.parentNode;
                     }
