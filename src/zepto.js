@@ -107,6 +107,14 @@ var $ = (function (d) {
                 ';opcity' + opa);
         },
 
+        bind: function(event, callback) {
+            return this(function (el) {
+                event.split(/\s/).forEach(function (event) {
+                    el.addEventListener(event, callback, false);
+                });
+            });
+        },
+
         live: function(event, callback) {
             var selector = this.selector;
             document.body.addEventListener(event, function (event) {

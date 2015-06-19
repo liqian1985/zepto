@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>bind方法的测试demo</title>
+</head>
+<body>
+    <div id="demo">
+        <p><button>点我有惊喜</button></p>
+
+        <p>bind方法的测试demo</p>
+    </div>
+    <script type="text/javascript" src="../src/zepto.js"></script>
+    <script type="text/javascript">
+        $('p').bind('click dbclick', function () {
+            var $this = $(this);
+            console.log('000');
+            alert($this.html());
+        });
+    </script>
+</body>
+</html>

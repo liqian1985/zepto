@@ -115,6 +115,7 @@ describe('zepto suite text', function () {
             expect(result.dom[1].style.height).toBe('100px');
         });
     });
+
     describe('append suite text', function () {
         it ('验证$方法返回值中包含append方法', function () {
             var result = $('div'),
@@ -128,6 +129,7 @@ describe('zepto suite text', function () {
             expect(appendB.dom[1].parentNode.id).toBe('text');
         });
     });
+
     describe('prepend suite text', function () {
         it('验证$方法返回值中包含prepend方法', function () {
             var result = $('div'),
@@ -164,6 +166,7 @@ describe('zepto suite text', function () {
 
         });
     });
+
     describe("mocking ajax", function() {
         describe("suite wide usage", function () {
             beforeEach(function () {
