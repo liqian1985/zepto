@@ -109,10 +109,23 @@ describe('zepto suite text', function () {
 
     describe('offset suite text', function () {
         it('验证offset方法', function () {
-            var result = $('div');
+            var result = $('div'),
+                top,
+                left;
+            document.body.style.position = "relative";
+            result.dom[0].style.position = "absolute";
+            result.dom[0].style.top = "100px";
+            result.dom[0].style.left = "100px";
+            result.dom[0].style.width = "100px";
+            result.dom[0].style.height = "100px";
+            top = result.offset().top + document.body.scrollTop;
+            left = result.offset().left + document.body.scrollLeft;
 
             expect($.fn.offset).toEqual(jasmine.any(Function));
-            //expect(result.offset.left).toBe('0px');
+            expect(result.offset().top).toBe(top);
+            expect(result.offset().left).toBe(left);
+            expect(result.offset().width).toBe(result.dom[0].getBoundingClientRect().width);
+            expect(result.offset().height).toBe(result.dom[0].getBoundingClientRect().height);
         });
     });
 
