@@ -69,6 +69,16 @@ describe('zepto suite text', function () {
         });
     });
 
+    describe('closest suite text', function () {
+       it('验证 closest 方法', function () {
+           var dom1 = $('span'),
+               result = dom1.closest('div');
+           expect($.fn.closest).toEqual(jasmine.any(Function));
+           expect(dom1.dom.length).toBe(1);
+           expect(result.id).toBe('text');
+       });
+    });
+
     describe('html suite text', function () {
         it ('验证$函数返回值中包含html方法', function () {
             var result = $('div'),
