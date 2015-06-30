@@ -122,12 +122,10 @@ describe('zepto suite text', function () {
             var result = $('div'),
                 top,
                 left;
-            document.body.style.position = "relative";
-            result.dom[0].style.position = "absolute";
-            result.dom[0].style.top = "100px";
-            result.dom[0].style.left = "100px";
-            result.dom[0].style.width = "100px";
-            result.dom[0].style.height = "100px";
+            document.body.style.position = 'relative';
+            result.dom[0].style.position = 'absolute';
+            result.dom[0].style.top = '100px';
+            result.dom[0].style.left = '100px';
             top = result.offset().top + document.body.scrollTop;
             left = result.offset().left + document.body.scrollLeft;
 
@@ -136,6 +134,19 @@ describe('zepto suite text', function () {
             expect(result.offset().left).toBe(left);
             expect(result.offset().width).toBe(result.dom[0].getBoundingClientRect().width);
             expect(result.offset().height).toBe(result.dom[0].getBoundingClientRect().height);
+        });
+    });
+
+    describe('width height suite text', function () {
+        it('验证width height的返回值', function () {
+            var result = $('div');
+            document.body.style.position = 'relative';
+            result.dom[0].style.position = 'absolute';
+
+            expect($.fn.width).toEqual(jasmine.any(Function));
+            expect($.fn.height).toEqual(jasmine.any(Function));
+            expect(result.width()).toBe(result.offset().width);
+            expect(result.height()).toBe(result.offset().height);
         });
     });
 
