@@ -79,6 +79,24 @@ describe('zepto suite text', function () {
        });
     });
 
+    describe('show suite text', function () {
+        it('验证 show 方法', function () {
+            var result = $('div');
+            result.show();
+            expect($.fn.show).toEqual(jasmine.any(Function));
+            expect(result.dom[0].style.display).toBe('block');
+        });
+    });
+
+    describe('hide suite text', function () {
+        it('验证 hide 方法', function () {
+            var result = $('div');
+            result.hide();
+            expect($.fn.hide).toEqual(jasmine.any(Function));
+            expect(result.dom[0].style.display).toBe('none');
+        });
+    });
+
     describe('html suite text', function () {
         it ('验证$函数返回值中包含html方法', function () {
             var result = $('div'),

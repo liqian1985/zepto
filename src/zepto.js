@@ -86,6 +86,14 @@ var $ = (function (d) {
             }
         },
 
+        show: function() {
+            return this.css('display:block');
+        },
+
+        hide: function() {
+            return this.css('display:none');
+        },
+
         html: function(html) {
             if (html === void 0) {
                 if (this.dom.length > 0) {
