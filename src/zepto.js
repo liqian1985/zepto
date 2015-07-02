@@ -4,6 +4,7 @@ var $ = (function (d) {
         CN = "className",
         AEL = "addEventListener",
         PN = "parentNode",
+        QSA = "querySelectorAll",
         ADJ_OPS = {
             append: 'beforeEnd',
             prepend: 'afterBegin',
@@ -27,7 +28,7 @@ var $ = (function (d) {
             fn.dom = [_];
         } else {
             fn.selector = _;
-            fn.dom = slice.call(d.querySelectorAll(fn.selector));
+            fn.dom = slice.call(d[QSA](fn.selector));
         }
 
         for (k in $.fn) {
@@ -41,7 +42,7 @@ var $ = (function (d) {
     }
 
     function elSelect(el, selector) {
-        return slice.call(el.querySelectorAll(selector));
+        return slice.call(el[QSA](selector));
     }
 
     $.fn = {
@@ -92,6 +93,18 @@ var $ = (function (d) {
 
         hide: function() {
             return this.css('display:none');
+        },
+
+        prev: function() {
+            return $(this.dom.map(function (el) {
+                return el.previousElementSibling;
+            }));
+        },
+
+        next: function() {
+            return $(this.dom.map(function (el) {
+                return el.nextElementSibling;
+            }));
         },
 
         html: function(html) {

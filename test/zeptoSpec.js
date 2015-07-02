@@ -6,7 +6,9 @@ describe('zepto suite text', function () {
         div.id = 'text';
         div.className = "test0";
         div.setAttribute('name', 'box');
-        div.innerHTML = "<p><span>text</span></p><p>text</p><div class='test1'>innerdiv</div>";
+        div.innerHTML = "<ul><li id='item1'>item1</li><li id='item2'>item2</li></ul>" +
+                        "<p><span>text</span></p><p>text</p>" +
+                        "<div class='test1'>innerdiv</div>";
         document.body.appendChild(div);
     });
 
@@ -94,6 +96,26 @@ describe('zepto suite text', function () {
             result.hide();
             expect($.fn.hide).toEqual(jasmine.any(Function));
             expect(result.dom[0].style.display).toBe('none');
+        });
+    });
+
+    describe('prev suite text', function () {
+        it('验证 prev 方法', function () {
+            var result = $('#item2'),
+                result2 = result.prev();
+
+            expect($.fn.prev).toEqual(jasmine.any(Function));
+            expect(result2.dom[0].id).toBe('item1');
+        });
+    });
+
+    describe('next suite text', function () {
+        it('验证 next 方法', function () {
+            var result = $('#item1'),
+                result2 = result.next();
+
+            expect($.fn.next).toEqual(jasmine.any(Function));
+            expect(result2.dom[0].id).toBe('item2');
         });
     });
 
