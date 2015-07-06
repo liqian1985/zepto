@@ -1,11 +1,13 @@
 var Zepto = (function() {
     var slice = [].slice,
         d = document,
-        k,
         CN = "className",
         AEL = "addEventListener",
         PN = "parentNode",
-        QSA = "querySelectorAll",
+        IO = "indexOf",
+        T = "target",
+        IH = "innerHTML",
+        SA = "setAttribute",
         ADJ_OPS = {
             append: 'beforeEnd',
             prepend: 'afterBegin',
@@ -16,6 +18,19 @@ var Zepto = (function() {
         touchTimeout,
         e,
         k;
+
+    function $$(el, selector) {
+        return slice.call(el.querySelectorAll(selector));
+    }
+
+    function classRE(name) {
+        return new RegExp("(^|\\s)" + name + "(\\s|$)");
+    }
+
+    function dispatch(event, target) {
+        target.dispatchEvent(e = d.createEvent('Events'), e.initEvent(event, true, false));
+    }
+
     function $(_, context) {
         if (context !== void 0) {
             return $(context).find(_);
@@ -32,22 +47,15 @@ var Zepto = (function() {
         } else if (_ instanceof Element) {
             fn.dom = [_];
         } else {
-            fn.selector = _;
-            fn.dom = slice.call(d[QSA](fn.selector));
+            fn.dom = $$(d, fn.selector = _).filter(function (el) {
+                return el !== void 0 && el !== null;
+            });
         }
 
         for (k in $.fn) {
             fn[k] = $.fn[k];
         }
         return fn;
-    }
-
-    function classRE(name) {
-        return new RegExp("(^|\\s)" + name + "(\\s|$)");
-    }
-
-    function elSelect(el, selector) {
-        return slice.call(el[QSA](selector));
     }
 
     $.fn = {
@@ -77,7 +85,7 @@ var Zepto = (function() {
 
         find: function(selector) {
             return $(this.dom.map(function (el) {
-                return elSelect(el, selector) })
+                return $$(el, selector) })
                     .reduce(function (a, b) {
                         return a.concat(b) }, [])
             );
@@ -85,8 +93,8 @@ var Zepto = (function() {
 
         closest: function(selector) {
             var el = this.dom[0][PN],
-                nodes = elSelect(d, selector);
-            while (el && nodes.indexOf(el) < 0) {
+                nodes = $$(d, selector);
+            while (el && nodes[IO](el) < 0) {
                 el = el[PN];
             }
             if (el && !(el === d)) {
@@ -121,13 +129,13 @@ var Zepto = (function() {
         html: function(html) {
             if (html === void 0) {
                 if (this.dom.length > 0) {
-                    return this.dom[0].innerHTML;
+                    return this.dom[0][IH];
                 } else {
                     return null;
                 }
             } else {
                 return this(function (el) {
-                    el.innerHTML = html;
+                    el[IH] = html;
                 });
             }
         },
@@ -143,10 +151,10 @@ var Zepto = (function() {
                 this(function (el) {
                     if (typeof name == 'object') {
                         for (k in name) {
-                            return el.setAttribute(k, name[k]);
+                            return el[SA](k, name[k]);
                         }
                     } else {
-                        return el.setAttribute(name, value);
+                        return el[SA](name, value);
                     }
                 });
             }
@@ -168,8 +176,8 @@ var Zepto = (function() {
             };
         },
 
-        index: function(target) {
-            return this.dom.indexOf($(target).get(0));
+        index: function(el) {
+            return this.dom[IO]($(el).get(0));
         },
 
         anim: function(transform, opacity, dur) {
@@ -210,9 +218,9 @@ var Zepto = (function() {
         delegate: function(selector, event, callback) {
             return this(function (el) {
                 el[AEL](event, function (event) {
-                    var target = event.target,
-                        nodes = elSelect(el, selector);
-                    while (target && nodes.indexOf(target) < 0) {
+                    var target = event[T],
+                        nodes = $$(el, selector);
+                    while (target && nodes[IO](target) < 0) {
                         target = target[PN];
                     }
                     if (target && !(target === el) && !(target === d)) {
@@ -255,10 +263,6 @@ var Zepto = (function() {
             return this.bind(m, callback);
         }
     });
-
-    function dispatch(event, target) {
-        target.dispatchEvent(e = d.createEvent('Events'), e.initEvent(event, true, false));
-    }
 
     d.ontouchstart = function(e) {
         var now = Date.now(),
