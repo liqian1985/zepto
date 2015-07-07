@@ -31,6 +31,16 @@ describe('zepto suite text', function () {
         })
     });
 
+    describe('fn.compact suite text', function () {
+        it('验证$.fm.compact 方法', function () {
+            var result = $('div');
+            expect(result.compact).toEqual(jasmine.any(Function));
+            expect(result.compact().dom.length).toBe(2);
+            expect(result.compact().dom[0]).toBe(div);
+            expect(result.compact().dom[1].innerHTML).toBe('innerdiv');
+        });
+    });
+
     describe('$.fn.get() suite text', function () {
         it('验证$.fn.get()方法', function () {
             var result = $('div');

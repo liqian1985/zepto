@@ -59,6 +59,10 @@ var Zepto = (function() {
     }
 
     $.fn = {
+        compact: function() {
+            return $(this.dom);
+        },
+
         get: function(idx) {
             if (idx === void 0) {
                 return this.dom;
