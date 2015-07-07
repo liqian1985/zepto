@@ -108,11 +108,11 @@ var Zepto = (function() {
         },
 
         show: function() {
-            return this.css('display:block');
+            return this.css('display', 'block');
         },
 
         hide: function() {
-            return this.css('display:none');
+            return this.css('display', 'none');
         },
 
         prev: function() {
@@ -157,10 +157,14 @@ var Zepto = (function() {
             }
         },
 
-        css: function(style) {
-            return this(function (el) {
-                el.style.cssText += ';' + style;
-            });
+        css: function(prop, value) {
+            if (arguments.length == 1) {
+                return this.dom[0].style[prop];
+            } else {
+                return this(function(el) {
+                    el.style[prop] = value;
+                });
+            }
         },
 
         offset: function() {

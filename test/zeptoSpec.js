@@ -158,8 +158,8 @@ describe('zepto suite text', function () {
     describe('$.css suite text', function () {
         it ('验证$函数返回值中包含css方法', function () {
             var result = $('div');
-            result.css('width:100px');
-            result.css('font-size:12px');
+            result.css('width', '100px');
+            result.css('font-size', '12px');
             expect($.fn.css).toEqual(jasmine.any(Function));
             expect(result.dom[0].style.width).toBe('100px');
             expect(result.dom[0].style.fontSize).toBe('12px');
@@ -215,7 +215,7 @@ describe('zepto suite text', function () {
     describe('链式语法', function () {
         it ('测试$方法返回值的链式语法', function () {
             var result = $('div');
-            result.html('456').css('height:100px');
+            result.html('456').css('height', '100px');
             expect(result.dom[0].innerHTML).toBe('456');
             expect(result.dom[1].innerHTML).toBe('456');
             expect(result.dom[0].style.height).toBe('100px');
