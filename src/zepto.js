@@ -14,7 +14,8 @@ var Zepto = (function() {
             after: 'afterEnd'
         },
         e,
-        k;
+        k,
+        css;
 
     function $$(el, selector) {
         return slice.call(el.querySelectorAll(selector));
@@ -45,10 +46,19 @@ var Zepto = (function() {
             });
         }
 
-        for (k in $.fn) {
-            fn[k] = $.fn[k];
-        }
+        $.extend(fn, $.fn);
         return fn;
+    }
+
+    $.extend = function (target, src) {
+        for (k in src) {
+            target[k] = src[k];
+        }
+    }
+
+    camelize = function (str) {
+        return str.replace(/-+(.)?/g, function (match, chr) {
+            return chr ? chr.toUpperCase() : '' });
     }
 
     $.fn = {
@@ -158,13 +168,19 @@ var Zepto = (function() {
         },
 
         css: function(prop, value) {
-            if (arguments.length == 1) {
-                return this.dom[0].style[prop];
-            } else {
-                return this(function(el) {
-                    el.style[prop] = value;
-                });
+            if( value === void 0 && typeof prop == 'string') {
+                return this.dom[0].style[camelize(prop)];
             }
+            css = "";
+            for (k in prop) {
+                css += k + ':' + prop[k] + ';';
+            }
+            if (typeof prop == 'string') {
+                css = prop + ":" + value;
+            }
+            return this(function (el) {
+                el.style.cssText += ';' + css;
+            });
         },
 
         offset: function() {
@@ -182,15 +198,11 @@ var Zepto = (function() {
         },
 
         anim: function(transform, opacity, dur) {
-            var opa;
-            if (opacity === 0) {
-                opa = 0;
-            } else {
-                opa = opacity || 1;
-            }
-            return this.css('-webkit-transition:all' + (dur || 0.5) + 's' +
-                '-webkit-transform:' + transform +
-                ';opcity' + opa);
+            return this.css({
+                '-webkit-transition': 'all ' + (dur || 0.5) + 's',
+                '-webkit-transform': transform,
+                'opacity': (opacity === 0 ? 0 : opacity || 1)
+            });
         },
 
         bind: function(event, callback) {
