@@ -242,15 +242,21 @@ var Zepto = (function() {
                 }, false);
             });
         },
+
+        hasClass: function(name) {
+            return classRE(name).test(this.dom[0][CN]);
+        },
+
         addClass: function(name) {
             return this(function (el) {
-                !classRE(name).test(el[CN])
-                    && (el[CN] += (el[CN] ? ' ' : '') + name);
+                //在这里学习了一下&&作为判断时的用法，好处是精简了代码，
+                // 坏处是不利于阅读，对读代码的人要求高些，可以适当的写注释
+                !$(el).hasClass(name) && (el[CN] += (el[CN] ? ' ' : '') + name);
             });
         },
         removeClass: function(name) {
             return this(function (el) {
-                el[CN] = el[CN].replace(classRE(name), ' ').replace(/^\s+|\s+$/g, '');
+                el[CN] = el[CN].replace(classRE(name), ' ').trim();
             });
         },
         trigger: function (event) {
