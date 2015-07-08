@@ -15,10 +15,15 @@
 <div id="demo"></div>
 <button>点我旋转</button>
 <script type="text/javascript" src="../src/zepto.js"></script>
+<script type="text/javascript" src="../src/fx.js"></script>
 <script type="text/javascript">
       var btn = document.getElementsByTagName('button')[0];
       btn.onclick = function () {
-          $('div').anim('rotate(720deg)', 0.5, 10);
+          $('div').anim({
+              translate3d: '100px, 100px, 100px',
+              rotateZ: '90deg',
+              opacity: 0.5
+          }, 2, 'ease-out');
       }
 </script>
 </body>
