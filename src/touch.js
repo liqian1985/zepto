@@ -1,6 +1,6 @@
 (function($){
     var d = document,
-        touch={},
+        touch = {},
         touchTimeout;
 
     d.ontouchstart = function(e) {
@@ -32,6 +32,10 @@
                 touch = {};
             }, 250);
         }
+    };
+
+    d.ontouchcancel = function() {
+        touch = {};
     };
 
     ['swipe', 'doubleTap', 'tap'].forEach(function (m) {

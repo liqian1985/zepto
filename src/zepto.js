@@ -17,12 +17,25 @@ var Zepto = (function() {
         k,
         css;
 
+    // fix for iOS 3.2
+    if (String.prototype.trim === void 0) {
+        String.prototype.trim = function(){
+            return this.replace(/^\s+/, '').replace(/\s+$/, '');
+        };
+    }
+
     function $$(el, selector) {
         return slice.call(el.querySelectorAll(selector));
     }
 
     function classRE(name) {
         return new RegExp("(^|\\s)" + name + "(\\s|$)");
+    }
+
+    function compact(array) {
+        return array.filter(function (el) {
+            return el !== void 0 && el !== null;
+        });
     }
 
     function $(_, context) {
@@ -41,10 +54,9 @@ var Zepto = (function() {
         } else if (_ instanceof Element) {
             fn.dom = [_];
         } else {
-            fn.dom = $$(d, fn.selector = _).filter(function (el) {
-                return el !== void 0 && el !== null;
-            });
+            fn.dom = $$(d, fn.selector = _);
         }
+        fn.dom = compact(fn.dom);
 
         $.extend(fn, $.fn);
         return fn;
@@ -63,7 +75,8 @@ var Zepto = (function() {
 
     $.fn = {
         compact: function() {
-            return $(this.dom);
+            this.dom = compact(this.dom);
+            return this;
         },
 
         get: function(idx) {
@@ -229,11 +242,16 @@ var Zepto = (function() {
                         target = target[PN];
                     }
                     if (target && !(target === el) && !(target === d)) {
-                        callback.call(target, event);
+                        callback(target, event);
                     }
                 }, false);
             });
         },
+
+        live: function(event, callback) {
+            return this, $(d.body).delegate(this.selector, event, callback);
+        },
+
 
         hasClass: function(name) {
             return classRE(name).test(this.dom[0][CN]);
