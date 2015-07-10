@@ -6,7 +6,11 @@ describe('zepto suite text', function () {
         div.id = 'text';
         div.className = "test0";
         div.setAttribute('name', 'box');
-        div.innerHTML = "<ul><li id='item1'>item1</li><li id='item2'>item2</li></ul>" +
+        div.innerHTML = "<ul><li id='item1'>item1</li>" +
+                            "<li id='item2'>" +
+                                "<ul><li id='item2-1'>item2-1</li><li>item2-2</li></ul>" +
+                            "</li>" +
+                        "</ul>" +
                         "<p><span>text</span></p><p>text</p>" +
                         "<div class='test1'>innerdiv</div>";
         document.body.appendChild(div);
@@ -71,6 +75,16 @@ describe('zepto suite text', function () {
         });
     });
 
+    describe('filter() suite text', function () {
+        it('验证 $.fn.filter 方法', function () {
+            var result = $('div').filter('.test1');
+            expect($.fn.filter).toEqual(jasmine.any(Function));
+            expect(result.dom.length).toBe(1);
+            expect(result.dom[0].className).toBe('test1');
+            expect(result.dom[0].innerHTML).toBe('innerdiv');
+        });
+    });
+
     describe('first suite text', function () {
         it('验证$.fn.first 方法', function () {
             var result = $('div').first();
@@ -92,11 +106,9 @@ describe('zepto suite text', function () {
 
     describe('closest suite text', function () {
        it('验证 closest 方法', function () {
-           var dom1 = $('span'),
-               result = dom1.closest('div');
+           var result = $('#item2-1').closest('li');
            expect($.fn.closest).toEqual(jasmine.any(Function));
-           expect(dom1.dom.length).toBe(1);
-           expect(result.id).toBe('text');
+           expect(result.dom.length).toBe(1);
        });
     });
 

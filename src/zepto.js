@@ -1,12 +1,6 @@
 var Zepto = (function() {
     var slice = [].slice,
         d = document,
-        CN = "className",
-        AEL = "addEventListener",
-        PN = "parentNode",
-        IO = "indexOf",
-        IH = "innerHTML",
-        SA = "setAttribute",
         ADJ_OPS = {
             append: 'beforeEnd',
             prepend: 'afterBegin',
@@ -89,7 +83,7 @@ var Zepto = (function() {
 
         remove: function() {
             return this(function (el) {
-                el[PN].removeChild(el);
+                el.parentNode.removeChild(el);
             });
         },
 
@@ -97,6 +91,12 @@ var Zepto = (function() {
             return this(function (e) {
                 callback.call(e);
             });
+        },
+
+        filter: function(selector) {
+            return $(this.dom.filter(function (el) {
+                return $$(el.parentNode, selector).indexOf(el) >= 0;
+            }));
         },
 
         first: function(callback) {
@@ -113,15 +113,15 @@ var Zepto = (function() {
         },
 
         closest: function(selector) {
-            var el = this.dom[0][PN],
+            var el = this.dom[0].parentNode,
                 nodes = $$(d, selector);
-            while (el && nodes[IO](el) < 0) {
-                el = el[PN];
+            while (el && nodes.indexOf(el) < 0) {
+                el = el.parentNode;
             }
             if (el && !(el === d)) {
-                return el;
+                return $(el);
             } else {
-                return [];
+                return $([]);
             }
         },
 
@@ -150,13 +150,13 @@ var Zepto = (function() {
         html: function(html) {
             if (html === void 0) {
                 if (this.dom.length > 0) {
-                    return this.dom[0][IH];
+                    return this.dom[0].innerHTML;
                 } else {
                     return null;
                 }
             } else {
                 return this(function (el) {
-                    el[IH] = html;
+                    el.innerHTML = html;
                 });
             }
         },
@@ -172,10 +172,10 @@ var Zepto = (function() {
                 this(function (el) {
                     if (typeof name == 'object') {
                         for (k in name) {
-                            return el[SA](k, name[k]);
+                            return el.setAttribute(k, name[k]);
                         }
                     } else {
-                        return el[SA](name, value);
+                        return el.setAttribute(name, value);
                     }
                 });
             }
@@ -208,24 +208,24 @@ var Zepto = (function() {
         },
 
         index: function(el) {
-            return this.dom[IO]($(el).get(0));
+            return this.dom.indexOf($(el).get(0));
         },
 
         bind: function(event, callback) {
             return this(function (el) {
                 event.split(/\s/).forEach(function (event) {
-                    el[AEL](event, callback, false);
+                    el.addEventListener(event, callback, false);
                 });
             });
         },
 
         delegate: function(selector, event, callback) {
             return this(function (el) {
-                el[AEL](event, function (event) {
+                el.addEventListener(event, function (event) {
                     var target = event.target,
                         nodes = $$(el, selector);
-                    while (target && nodes[IO](target) < 0) {
-                        target = target[PN];
+                    while (target && nodes.indexOf(target) < 0) {
+                        target = target.parentNode;
                     }
                     if (target && !(target === el) && !(target === d)) {
                         callback(target, event);
@@ -241,19 +241,19 @@ var Zepto = (function() {
 
 
         hasClass: function(name) {
-            return classRE(name).test(this.dom[0][CN]);
+            return classRE(name).test(this.dom[0].className);
         },
 
         addClass: function(name) {
             return this(function (el) {
                 //在这里学习了一下&&作为判断时的用法，好处是精简了代码，
                 // 坏处是不利于阅读，对读代码的人要求高些，可以适当的写注释
-                !$(el).hasClass(name) && (el[CN] += (el[CN] ? ' ' : '') + name);
+                !$(el).hasClass(name) && (el.className += (el.className ? ' ' : '') + name);
             });
         },
         removeClass: function(name) {
             return this(function (el) {
-                el[CN] = el[CN].replace(classRE(name), ' ').trim();
+                el.className = el.className.replace(classRE(name), ' ').trim();
             });
         },
         trigger: function (event) {
