@@ -71,6 +71,15 @@ describe('zepto suite text', function () {
         });
     });
 
+    describe('first suite text', function () {
+        it('验证$.fn.first 方法', function () {
+            var result = $('div').first();
+            expect($.fn.first).toEqual(jasmine.any(Function));
+            expect(result.dom.length).toBe(1);
+            expect(result.dom[0].id).toBe('text');
+        });
+    });
+
     describe('find suite text', function () {
         it('验证$.fn.find 方法', function () {
             var result = $('div'),

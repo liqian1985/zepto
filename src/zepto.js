@@ -99,9 +99,10 @@ var Zepto = (function() {
             });
         },
 
-        /*each: function(callback) {
-            return this(callback);
-        },*/
+        first: function(callback) {
+            this.dom = compact([this.dom[0]]);
+            return this;
+        },
 
         find: function(selector) {
             return $(this.dom.map(function (el) {
@@ -218,21 +219,6 @@ var Zepto = (function() {
             });
         },
 
-        live: function(event, callback) {
-            var selector = this.selector;
-            d.body[AEL](event, function (event) {
-                var target = event.target,
-                    nodes = slice.call(d.querySelectorAll(selector));
-                while (target && nodes.indexOf(target) < 0) {
-                    target = target[PN];
-                }
-                if (target && !(target === D)) {
-                    callback.call(target, event);
-                }
-            }, false);
-            return this;
-        },
-
         delegate: function(selector, event, callback) {
             return this(function (el) {
                 el[AEL](event, function (event) {
@@ -249,7 +235,8 @@ var Zepto = (function() {
         },
 
         live: function(event, callback) {
-            return this, $(d.body).delegate(this.selector, event, callback);
+            $(d.body).delegate(this.selector, event, callback);
+            return this;
         },
 
 
