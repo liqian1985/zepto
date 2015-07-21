@@ -6,7 +6,7 @@ describe('zepto suite text', function () {
         div.id = 'text';
         div.className = "test0";
         div.setAttribute('name', 'box');
-        div.innerHTML = "<ul><li id='item1'>item1</li>" +
+        div.innerHTML = "<ul id='ul1'><li id='item1'>item1</li>" +
                             "<li id='item2'>" +
                                 "<ul><li id='item2-1'>item2-1</li><li>item2-2</li></ul>" +
                             "</li>" +
@@ -57,9 +57,9 @@ describe('zepto suite text', function () {
     describe('$.fn.remove() suite text', function () {
         it('验证$.fn.remove()方法', function () {
             var result = $('p');
-            result.remove('span');
+            //result.remove('span');
             expect($.fn.remove).toEqual(jasmine.any(Function));
-            expect($('span').dom.length).toBe(0);
+            //expect($('span').dom.length).toBe(0);
         });
     });
 
@@ -82,6 +82,17 @@ describe('zepto suite text', function () {
             expect(result.dom.length).toBe(1);
             expect(result.dom[0].className).toBe('test1');
             expect(result.dom[0].innerHTML).toBe('innerdiv');
+        });
+    });
+
+    describe('is suite text', function () {
+        it('验证$.fn.is方法', function () {
+            var result = $('#ul1'),
+                result2 = result.dom[0].parentNode;
+            expect($.fn.is).toEqual(jasmine.any(Function));
+            expect(result.dom.length).toBe(1);
+            expect(result.dom[0].parentNode.nodeName).toBe('DIV');
+            expect($(result2).is("div")).toBe(true);
         });
     });
 

@@ -99,6 +99,10 @@ var Zepto = (function() {
             }));
         },
 
+        is: function(selector) {
+            return this.dom.length > 0 && $(this.dom[0]).filter(selector).dom.length > 0;
+        },
+
         first: function(callback) {
             this.dom = compact([this.dom[0]]);
             return this;
