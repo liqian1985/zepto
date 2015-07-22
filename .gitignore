@@ -1,7 +1,13 @@
-*.swp
-*.log
-
 .DS_Store
 .idea
 node_modules
 bower_components
+
+dist/
+dist/zepto.min.js
+dist/zepto.js
+pkg
+
+*.swp
+*.log
+
