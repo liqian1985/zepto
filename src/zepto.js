@@ -34,26 +34,25 @@ var Zepto = (function() {
     }
 
     function Z(dom, _) {
-        this.dom = dom;
-        this.selector = _;
+        this.dom = dom || [];
+        this.selector = _ || '';
     }
+
     Z.prototype = $.fn;
 
-
     function $(_, context) {
-        if (context !== un) {
+        if (_ == document) {
+            return new Z;
+        } else if (context !== un) {
             return $(context).find(_);
+        } else if (_ instanceof Z) {
+            return new Z(compact(_.dom), _);
+        } else if (_ instanceof Array) {
+            return new Z(compact(_), _);
+        } else if (_ instanceof Element) {
+            return new Z(compact([_]), _);
         } else {
-            if (_ instanceof Z) {
-                dom = compact(_.dom);
-            } else if (_ instanceof Array) {
-                dom = compact(_);
-            } else if (_ instanceof Element) {
-                dom = compact([_]);
-            } else {
-                dom = compact($$(d, _));
-            }
-            return new Z(dom, _);
+            return new Z(compact($$(d, _)), _);
         }
     }
 
@@ -69,6 +68,11 @@ var Zepto = (function() {
     }
 
     $.fn = {
+        ready: function(callback) {
+            d.addEventListener('DOMContentLoaded', callback, false);
+            return this;
+        },
+
         compact: function() {
             this.dom = compact(this.dom);
             return this;
