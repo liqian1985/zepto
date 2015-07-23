@@ -41,7 +41,7 @@ var Zepto = (function() {
     Z.prototype = $.fn;
 
     function $(_, context) {
-        if (_ == document) {
+        if (_ == d) {
             return new Z;
         } else if (context !== un) {
             return $(context).find(_);
@@ -238,7 +238,7 @@ var Zepto = (function() {
                         target = target.parentNode;
                     }
                     if (target && !(target === el) && !(target === d)) {
-                        callback(target, event);
+                        callback.call(target, event);
                     }
                 }, false);
             });

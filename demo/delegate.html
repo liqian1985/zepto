@@ -12,9 +12,8 @@
     </div>
     <script type="text/javascript" src="../src/zepto.js"></script>
     <script type="text/javascript">
-        $('div').delegate('button', 'click', function (event) {
-            console.log('000');
-            alert(event.target);
+        $('div').delegate('button', 'click', function () {
+            alert($(this));
         });
     </script>
 </body>
