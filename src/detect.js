@@ -2,10 +2,10 @@
     function detect(ua) {
         var ua = ua,
             os = {},
-            android = ua.match(/(Android)\s+([0-9\.]+)/),
-            iphone = ua.match(/(iPhone\sOS)\s([0-9_]+)/),
-            ipad = ua.match(/(iPad).*OS\s([0-9_]+)/),
-            webos = ua.match(/(webOS)\/([0-9\.]+)/);
+            android = ua.match(/(Android)\s+([\d.]+)/),
+            iphone = ua.match(/(iPhone\sOS)\s([\d_]+)/),
+            ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
+            webos = ua.match(/(webOS)\/([\d.]+)/);
         if (android) {
             os.android = true;
             os.version = android[2];
@@ -28,5 +28,9 @@
     }
     $.os = detect(navigator.userAgent);
     $.__detect = detect;
+    $.browser = {
+        webkit: true,
+        version: navigator.userAgent.match(/WebKit\/([\d.]+)/)[1]
+    }
 })(Zepto);
 
