@@ -26,11 +26,11 @@
         }
         return os;
     }
-    $.os = detect(navigator.userAgent);
+    //$.os = detect(navigator.userAgent);
     $.__detect = detect;
-    $.browser = {
-        webkit: true,
-        version: navigator.userAgent.match(/WebKit\/([\d.]+)/)[1]
-    }
+    //$.browser = {
+      //  webkit: true,
+        //version: navigator.userAgent.match(/WebKit\/([\d.]+)/)[1]
+    //}
 })(Zepto);
 

@@ -171,6 +171,20 @@ var Zepto = (function() {
             }
         },
 
+        text: function(text) {
+            if (text === un) {
+                if (this.dom.length > 0) {
+                    return this.dom[0].innerText;
+                } else {
+                    return null;
+                }
+            } else {
+                return this.each(function(el) {
+                    el.innerText = text;
+                });
+            }
+        },
+
         attr: function(name, value) {
             if (typeof name == 'string' && value === un) {
                 if (this.dom.length > 0) {

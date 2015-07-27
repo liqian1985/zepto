@@ -11,7 +11,7 @@ describe('zepto suite text', function () {
                                 "<ul><li id='item2-1'>item2-1</li><li>item2-2</li></ul>" +
                             "</li>" +
                         "</ul>" +
-                        "<p><span>text</span></p><p>text</p>" +
+                        "<p><span>spantext</span></p><p>text</p>" +
                         "<div class='test1'>innerdiv</div>";
         document.body.appendChild(div);
     });
@@ -169,7 +169,18 @@ describe('zepto suite text', function () {
             expect($.fn.html).toEqual(jasmine.any(Function));
             expect(result.dom[0].innerHTML).toBe('123');
             expect(result.dom[1].innerHTML).toBe('123');
-            expect($span.html()).toBe('text');
+            expect($span.html()).toBe('spantext');
+        });
+    });
+
+    describe('text suite text', function () {
+        it ('验证$函数返回值中包含text方法', function () {
+            var result = $('div');
+            result.text('123');
+            expect($.fn.text).toEqual(jasmine.any(Function));
+            expect(result.dom[0].innerText).toBe('123');
+            expect(result.dom[1].innerText).toBe('123');
+            //expect($('span').text()).toBe('spantext');
         });
     });
 
