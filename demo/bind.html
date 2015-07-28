@@ -9,14 +9,21 @@
         <p><button>点我有惊喜</button></p>
 
         <p>bind方法的测试demo</p>
+
     </div>
     <script type="text/javascript" src="../src/zepto.js"></script>
+    <script type="text/javascript" src="../src/event.js"></script>
     <script type="text/javascript">
-        $('p').bind('click dbclick', function () {
-            var $this = $(this);
-            console.log('000');
-            alert($this.html());
+        function bindEvt() {
+            $('p').bind('click', function () {
+                alert($(this).html());
+            });
+        }
+        $(document).ready(function() {
+            bindEvt();
+            $('p').unbind('click', bindEvt());
         });
+
     </script>
 </body>
 </html>

@@ -10,17 +10,14 @@ var Zepto = (function() {
         e,
         k,
         css,
-        un;
+        un,
+        $$;
 
     // fix for iOS 3.2
     if (String.prototype.trim === un) {
         String.prototype.trim = function(){
             return this.replace(/^\s+/, '').replace(/\s+$/, '');
         };
-    }
-
-    function $$(el, selector) {
-        return slice.call(el.querySelectorAll(selector));
     }
 
     function classRE(name) {
@@ -49,7 +46,7 @@ var Zepto = (function() {
             return new Z(compact(_.dom), _);
         } else if (_ instanceof Array) {
             return new Z(compact(_), _);
-        } else if (_ instanceof Element) {
+        } else if (_ instanceof Element || _ === window) {
             return new Z(compact([_]), _);
         } else {
             return new Z(compact($$(d, _)), _);
@@ -60,6 +57,10 @@ var Zepto = (function() {
         for (k in src) {
             target[k] = src[k];
         }
+    }
+
+    $.qsa = $$ = function(el, selector) {
+        return slice.call(el.querySelectorAll(selector));
     }
 
     camelize = function (str) {
@@ -235,35 +236,6 @@ var Zepto = (function() {
             return this.dom.indexOf($(el).get(0));
         },
 
-        bind: function(event, callback) {
-            return this.each(function (el) {
-                event.split(/\s/).forEach(function (event) {
-                    el.addEventListener(event, callback, false);
-                });
-            });
-        },
-
-        delegate: function(selector, event, callback) {
-            return this.each(function (el) {
-                el.addEventListener(event, function (event) {
-                    var target = event.target,
-                        nodes = $$(el, selector);
-                    while (target && nodes.indexOf(target) < 0) {
-                        target = target.parentNode;
-                    }
-                    if (target && !(target === el) && !(target === d)) {
-                        callback.call(target, event);
-                    }
-                }, false);
-            });
-        },
-
-        live: function(event, callback) {
-            $(d.body).delegate(this.selector, event, callback);
-            return this;
-        },
-
-
         hasClass: function(name) {
             return classRE(name).test(this.dom[0].className);
         },
@@ -279,12 +251,6 @@ var Zepto = (function() {
             return this.each(function (el) {
                 el.className = el.className.replace(classRE(name), ' ').trim();
             });
-        },
-        trigger: function (event) {
-            return this.each(function (el) {
-                var e;
-                el.dispatchEvent(e = d.createEvent('Events'),
-                    e.initEvent(event, true, false)) });
         }
     };
 
