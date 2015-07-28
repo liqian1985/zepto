@@ -7,7 +7,6 @@ var Zepto = (function() {
             before: 'beforeBegin',
             after: 'afterEnd'
         },
-        e,
         k,
         css,
         un,
@@ -30,12 +29,16 @@ var Zepto = (function() {
         });
     }
 
+    function camelize(str) {
+        return str.replace(/-+(.)?/g, function(match, chr) {
+            return chr ? chr.toUpperCase() : '';
+        });
+    }
+
     function Z(dom, _) {
         this.dom = dom || [];
         this.selector = _ || '';
     }
-
-    Z.prototype = $.fn;
 
     function $(_, context) {
         if (_ == d) {
@@ -61,11 +64,6 @@ var Zepto = (function() {
 
     $.qsa = $$ = function(el, selector) {
         return slice.call(el.querySelectorAll(selector));
-    }
-
-    camelize = function (str) {
-        return str.replace(/-+(.)?/g, function (match, chr) {
-            return chr ? chr.toUpperCase() : '' });
     }
 
     $.fn = {
