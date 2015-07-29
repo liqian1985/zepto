@@ -12,12 +12,12 @@
         }
         if (iphone) {
             os.ios = true;
-            os.version = iphone[2].replace(/_/g,'.');
+            os.version = iphone[2].replace(/_/g, '.');
             os.iphone = true;
         }
         if (ipad) {
             os.ios = true;
-            os.version = ipad[2].replace(/_/g,'.');
+            os.version = ipad[2].replace(/_/g, '.');
             os.ipad = true;
         }
         if (webos) {

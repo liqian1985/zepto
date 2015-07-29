@@ -3,18 +3,18 @@
         timeout;
 
     $.fn.remove = function() {
-        return this.each(function (el) {
-            if (el.tagName == 'IMG') {
-                cache.push(el);
-                el.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+        return this.each(function(element) {
+            if(element.tagName == 'IMG') {
+                cache.push(element);
+                element.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
                 if (timeout) {
                     clearTimeout(timeout);
                 }
                 timeout = setTimeout(function() {
-                    cache = []
+                    cache = [];
                 }, 60000);
             }
-            el.parentNode.removeChild(el);
+            element.parentNode.removeChild(element);
         });
     }
 })(Zepto);

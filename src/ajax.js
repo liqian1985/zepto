@@ -3,18 +3,18 @@
         // { type, url, data, success, dataType, contentType }
         options = options || {};
         var data = options.data,
-            cb = options.success,
+            callback = options.success,
             mime = mimeTypes[options.dataType],
             content = options.contentType,
             xhr = new XMLHttpRequest();
 
-        if (cb instanceof Function) {
+        if (callback instanceof Function) {
             xhr.onreadystatechange = function() {
                 if(xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
                     if (mime == 'application/json') {
-                        cb(JSON.parse(xhr.responseText));
+                        callback(JSON.parse(xhr.responseText));
                     } else {
-                        cb(xhr.responseText);
+                        callback(xhr.responseText);
                     }
                 }
             };
@@ -77,11 +77,11 @@
         if (!this.dom.length) {
             return this;
         }
-
         if (parts.length > 1) {
             url = parts[0];
             selector = parts[1];
         }
+
         $.get(url, function(response) {
             self.html(selector ?
                 $(document.createElement('div')).html(response).find(selector).html()
