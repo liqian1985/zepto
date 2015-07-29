@@ -39,9 +39,9 @@
     });
 
 
-    ['swipe', 'doubleTap', 'tap'].forEach(function (m) {
-        $.fn[m] = function(callback) {
-            return this.bind(m, callback);
+    ['swipe', 'doubleTap', 'tap'].forEach(function(gesture) {
+        $.fn[gesture] = function(callback) {
+            return this.bind(gesture, callback)
         }
     });
 })(Zepto);

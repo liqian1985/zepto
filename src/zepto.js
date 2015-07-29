@@ -1,19 +1,13 @@
 var Zepto = (function() {
     var slice = [].slice,
-        d = document,
-        ADJ_OPS = {
-            append: 'beforeEnd',
-            prepend: 'afterBegin',
-            before: 'beforeBegin',
-            after: 'afterEnd'
-        },
-        k,
+        key,
         css,
-        un,
-        $$;
+        $$,
+        document = window.document,
+        undefined;
 
     // fix for iOS 3.2
-    if (String.prototype.trim === un) {
+    if (String.prototype.trim === undefined) {
         String.prototype.trim = function(){
             return this.replace(/^\s+/, '').replace(/\s+$/, '');
         };
@@ -24,8 +18,8 @@ var Zepto = (function() {
     }
 
     function compact(array) {
-        return array.filter(function (el) {
-            return el !== un && el !== null;
+        return array.filter(function(item) {
+            return item !== undefined && item !== null;
         });
     }
 
@@ -35,40 +29,43 @@ var Zepto = (function() {
         });
     }
 
-    function Z(dom, _) {
+    function Z(dom, selector) {
         this.dom = dom || [];
-        this.selector = _ || '';
+        this.selector = selector || '';
     }
 
-    function $(_, context) {
-        if (_ == d) {
+    function $(selector, context) {
+        if (selector == document) {
             return new Z;
-        } else if (context !== un) {
-            return $(context).find(_);
-        } else if (_ instanceof Z) {
-            return new Z(compact(_.dom), _);
-        } else if (_ instanceof Array) {
-            return new Z(compact(_), _);
-        } else if (_ instanceof Element || _ === window) {
-            return new Z(compact([_]), _);
+        } else if (context !== undefined) {
+            return $(context).find(selector);
         } else {
-            return new Z(compact($$(d, _)), _);
+            var dom;
+            if (selector instanceof Z) {
+                dom = selector.dom;
+            } else if (selector instanceof Array) {
+                dom = selector
+            } else if (selector instanceof Element || selector === window) {
+                dom = [selector];
+            } else {
+                dom = $$(document, selector);
+            }
+            return new Z(compact(dom), selector);
         }
     }
 
-    $.extend = function (target, src) {
-        for (k in src) {
-            target[k] = src[k];
+    $.extend = function(target, source) {
+        for (key in source) {
+            target[key] = source[key];
         }
     }
-
-    $.qsa = $$ = function(el, selector) {
-        return slice.call(el.querySelectorAll(selector));
+    $.qsa = $$ = function(element, selector) {
+        return slice.call(element.querySelectorAll(selector));
     }
 
     $.fn = {
         ready: function(callback) {
-            d.addEventListener('DOMContentLoaded', callback, false);
+            document.addEventListener('DOMContentLoaded', callback, false);
             return this;
         },
 
@@ -78,7 +75,7 @@ var Zepto = (function() {
         },
 
         get: function(idx) {
-            if (idx === un) {
+            if (idx === undefined) {
                 return this.dom;
             } else {
                 return this.dom[idx];
@@ -122,21 +119,17 @@ var Zepto = (function() {
         },
 
         closest: function(selector) {
-            var el = this.dom[0].parentNode,
-                nodes = $$(d, selector);
-            while (el && nodes.indexOf(el) < 0) {
-                el = el.parentNode;
+            var node = this.dom[0].parentNode,
+                nodes = $$(document, selector);
+            while (node && nodes.indexOf(node) < 0) {
+                node = node.parentNode;
             }
-            if (el && !(el === d)) {
-                return $(el);
-            } else {
-                return $([]);
-            }
+            return $(node && !(node === document) ? node : []);
         },
 
         pluck: function(property) {
-            return this.dom.map(function (el) {
-                return el[property];
+            return this.dom.map(function(element) {
+                return element[property];
             });
         },
 
@@ -157,55 +150,55 @@ var Zepto = (function() {
         },
 
         html: function(html) {
-            if (html === un) {
+            if (html === undefined) {
                 if (this.dom.length > 0) {
                     return this.dom[0].innerHTML;
                 } else {
                     return null;
                 }
             } else {
-                return this.each(function (el) {
-                    el.innerHTML = html;
+                return this.each(function (element) {
+                    element.innerHTML = html;
                 });
             }
         },
 
         text: function(text) {
-            if (text === un) {
+            if (text === undefined) {
                 if (this.dom.length > 0) {
                     return this.dom[0].innerText;
                 } else {
                     return null;
                 }
             } else {
-                return this.each(function(el) {
-                    el.innerText = text;
+                return this.each(function(element) {
+                    element.innerText = text;
                 });
             }
         },
 
         attr: function(name, value) {
-            if (typeof name == 'string' && value === un) {
+            if (typeof name == 'string' && value === undefined) {
                 if (this.dom.length > 0) {
                     return this.dom[0].getAttribute(name) || undefined;
                 } else {
                     return null;
                 }
             } else {
-                this.each(function (el) {
+                this.each(function (element) {
                     if (typeof name == 'object') {
                         for (k in name) {
-                            return el.setAttribute(k, name[k]);
+                            return element.setAttribute(k, name[k]);
                         }
                     } else {
-                        return el.setAttribute(name, value);
+                        return element.setAttribute(name, value);
                     }
                 });
             }
         },
 
         css: function(prop, value) {
-            if( value === un && typeof prop == 'string') {
+            if( value === undefined && typeof prop == 'string') {
                 return this.dom[0].style[camelize(prop)];
             }
             css = "";
@@ -223,15 +216,15 @@ var Zepto = (function() {
         offset: function() {
             var obj = this.dom[0].getBoundingClientRect();
             return {
-                left: obj.left + d.body.scrollLeft,
-                top: obj.top + d.body.scrollTop,
+                left: obj.left + document.body.scrollLeft,
+                top: obj.top + document.body.scrollTop,
                 width: obj.width,
                 height: obj.height
             };
         },
 
-        index: function(el) {
-            return this.dom.indexOf($(el).get(0));
+        index: function(element) {
+            return this.dom.indexOf($(element).get(0));
         },
 
         hasClass: function(name) {
@@ -239,33 +232,39 @@ var Zepto = (function() {
         },
 
         addClass: function(name) {
-            return this.each(function (el) {
+            return this.each(function (element) {
                 //在这里学习了一下&&作为判断时的用法，好处是精简了代码，
                 // 坏处是不利于阅读，对读代码的人要求高些，可以适当的写注释
-                !$(el).hasClass(name) && (el.className += (el.className ? ' ' : '') + name);
+                !$(element).hasClass(name) && (element.className += (element.className ? ' ' : '') + name);
             });
         },
         removeClass: function(name) {
-            return this.each(function (el) {
-                el.className = el.className.replace(classRE(name), ' ').trim();
+            return this.each(function (element) {
+                element.className = element.className.replace(classRE(name), ' ').trim();
             });
         }
     };
 
-    ['width', 'height'].forEach(function (m) {
-        $.fn[m] = function () {
-            return this.offset()[m];
+    ['width', 'height'].forEach(function (property) {
+        $.fn[property] = function () {
+            return this.offset()[property];
         }
     });
 
-    for (k in ADJ_OPS) {
-        $.fn[k] = (function (op) {
+    var adjacencyOperators = {
+        append: 'beforeEnd',
+        prepend: 'afterBegin',
+        before: 'beforeBegin',
+        after: 'afterEnd'
+    };
+    for (key in adjacencyOperators) {
+        $.fn[key] = (function(operator) {
             return function(html) {
-                return this.each(function (el) {
-                    el['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](op, html);
+                return this.each(function(element) {
+                    element['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](operator, html);
                 });
             };
-        })(ADJ_OPS[k]);
+        })(adjacencyOperators[key]);
     }
 
     Z.prototype = $.fn;
