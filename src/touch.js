@@ -6,7 +6,7 @@
         return 'tagName' in node ? node : node.parentNode;
     }
 
-    $(document).ready(function() {
+    /*$(document).ready(function() {
         $(document.body).bind('touchstart', function(e) {
             var now = Date.now(),
                 delta = now - (touch.last || now);
@@ -37,7 +37,7 @@
             touch = {};
         });
     });
-
+*/
 
     ['swipe', 'doubleTap', 'tap'].forEach(function(gesture) {
         $.fn[gesture] = function(callback) {

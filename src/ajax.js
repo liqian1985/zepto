@@ -1,25 +1,41 @@
 (function ($) {
+    function empty() {}
     $.ajax = function(options){
         // { type, url, data, success, dataType, contentType }
         options = options || {};
         var data = options.data,
-            callback = options.success,
+            callback = options.success || empty,
+            errback = options.error || empty,
             mime = mimeTypes[options.dataType],
             content = options.contentType,
             xhr = new XMLHttpRequest();
 
-        if (callback instanceof Function) {
-            xhr.onreadystatechange = function() {
-                if(xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 0) {
                     if (mime == 'application/json') {
-                        callback(JSON.parse(xhr.responseText));
+                        var result,
+                            error = false;
+                        try {
+                            result = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            error = e;
+                        }
+                        if (error) {
+                            errback(xhr, 'parsererror', error);
+                        } else {
+                            callback(result, 'success', xhr);
+                        }
                     } else {
-                        callback(xhr.responseText);
+                        callback(xhr.responseText, 'success', xhr);
                     }
+                } else {
+                    errback(xhr, 'error');
                 }
-            };
+            }
         }
-        xhr.open(options.type || 'GET', options.url || window.location, true);
+
+    xhr.open(options.type || 'GET', options.url || window.location, true);
         if (mime) {
             xhr.setRequestHeader('Accept', mime);
         }

@@ -12,6 +12,7 @@ describe('zepto suite text', function () {
                             "</li>" +
                         "</ul>" +
                         "<p><span>spantext</span></p><p>text</p>" +
+                        "<input type='text' value='inputval' />" +
                         "<div class='test1'>innerdiv</div>";
         document.body.appendChild(div);
     });
@@ -105,6 +106,15 @@ describe('zepto suite text', function () {
         });
     });
 
+    describe('last suite text', function () {
+        it('验证$.fn.last 方法', function () {
+            var result = $('div').last();
+            expect($.fn.last).toEqual(jasmine.any(Function));
+            expect(result.dom.length).toBe(1);
+            expect(result.dom[0].innerHTML).toBe('innerdiv');
+        });
+    });
+
     describe('find suite text', function () {
         it('验证$.fn.find 方法', function () {
             var result = $('div'),
@@ -195,6 +205,7 @@ describe('zepto suite text', function () {
             expect(result.dom[0].getAttribute('name')).toBe('box');
             expect(result.dom[0].getAttribute('data')).toBe('123');
             expect(result.dom[1].getAttribute('data')).toBe('123');
+            expect($('input').attr('value')).toBe('inputval');
         });
     });
 
