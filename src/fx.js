@@ -12,7 +12,7 @@
             }
         }
         return this.css({
-            '-webkit-transition': 'all ' + (duration || 0.5) + 's ' + (ease || ''),
+            '-webkit-transition': 'all ' + (duration !== undefined ? duration : 0.5) + 's ' + (ease || ''),
             '-webkit-transform': transforms.join(' '),
             opacity: opacity
         });

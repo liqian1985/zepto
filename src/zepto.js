@@ -269,9 +269,9 @@ var Zepto = (function () {
                 element.className = element.className.replace(classRE(name), ' ').trim();
             });
         },
-        toggleClass: function(name) {
+        toggleClass: function(name, when) {
             return this.each(function(element) {
-                if ($(element).hasClass(name)) {
+                if ((when !== undefined && !when) || $(element).hasClass(name)) {
                     $(element).removeClass(name);
                 } else {
                     $(element).addClass(name);
