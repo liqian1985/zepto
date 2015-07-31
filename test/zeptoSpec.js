@@ -324,8 +324,16 @@ describe('zepto suite text', function () {
             expect(result.dom.length).toBe(2);
             expect(result.dom[0].className).toBe('');
             expect(result.dom[1].className).toBe('test1');
-
         });
     });
 
+    describe('toggleClass suite text', function () {
+        it('验证$方法返回值中包含toggleClass方法', function () {
+            var result = $('div');
+            result.toggleClass('test0');
+            expect($.fn.toggleClass).toEqual(jasmine.any(Function));
+            expect(result.dom[0].className).toBe('');
+            expect(result.dom[1].className).toBe('test1 test0');
+        });
+    });
 });
