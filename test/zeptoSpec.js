@@ -36,22 +36,18 @@ describe('zepto suite text', function () {
         })
     });
 
-    describe('fn.compact suite text', function () {
-        it('验证$.fm.compact 方法', function () {
-            var result = $('div');
-            expect(result.compact).toEqual(jasmine.any(Function));
-            expect(result.compact().dom.length).toBe(2);
-            expect(result.compact().dom[0]).toBe(div);
-            expect(result.compact().dom[1].innerHTML).toBe('innerdiv');
-        });
-    });
-
     describe('$.fn.get() suite text', function () {
         it('验证$.fn.get()方法', function () {
             var result = $('div');
             expect(result.get).toEqual(jasmine.any(Function));
             expect(result.get(0)).toBe(div);
             expect(result.get(1).innerHTML).toBe('innerdiv');
+        });
+    });
+
+    describe('$.fn.size() suite text', function () {
+        it('验证$.fn.size()', function () {
+            expect($('div').size()).toBe(2);
         });
     });
 
@@ -131,6 +127,28 @@ describe('zepto suite text', function () {
            expect($.fn.closest).toEqual(jasmine.any(Function));
            expect(result.dom.length).toBe(1);
        });
+    });
+
+    describe('parents suite text', function () {
+        it('验证parents()', function () {
+            var result = $('#item1'),
+                result1 = result.parents(),
+                result2 = result.parents('div');
+            expect($.fn.parents).toEqual(jasmine.any(Function));
+            expect(result1.dom[0].id).toBe('ul1');
+            expect(result2.dom[0].id).toBe('text');
+        });
+    });
+
+    describe('parent suite text', function () {
+        it('验证parent()', function () {
+            var result = $('#item1'),
+                result1 = result.parent(),
+                result2 = result.parent('ul');
+            expect($.fn.parent).toEqual(jasmine.any(Function));
+            expect(result1.dom[0].id).toBe('ul1');
+            expect(result2.dom[0].id).toBe('ul1');
+        });
     });
 
     describe('show suite text', function () {

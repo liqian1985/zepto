@@ -25,6 +25,12 @@ var Zepto = (function () {
         });
     }
 
+    function flatten(array){
+        return array.reduce(function(a, b){
+            return a.concat(b);
+        }, []);
+    }
+
     function camelize(str) {
         return str.replace(/-+(.)?/g, function (match, chr) {
             return chr ? chr.toUpperCase() : '';
@@ -42,6 +48,7 @@ var Zepto = (function () {
 
     function Z(dom, selector) {
         this.dom = dom || [];
+        this.length = this.dom.length;
         this.selector = selector || '';
     }
 
@@ -57,7 +64,7 @@ var Zepto = (function () {
             if (selector instanceof Z) {
                 dom = selector.dom;
             } else if (selector instanceof Array) {
-                dom = selector
+                dom = compact(selector);
             } else if (selector instanceof Element || selector === window) {
                 dom = [selector];
             } else if (fragmentRE.test(selector)) {
@@ -65,7 +72,7 @@ var Zepto = (function () {
             } else {
                 dom = $$(document, selector);
             }
-            return new Z(compact(dom), selector);
+            return new Z(dom, selector);
         }
     }
 
@@ -86,17 +93,16 @@ var Zepto = (function () {
             return this;
         },
 
-        compact: function () {
-            this.dom = compact(this.dom);
-            return this;
-        },
-
         get: function (idx) {
             if (idx === undefined) {
                 return this.dom;
             } else {
                 return this.dom[idx];
             }
+        },
+
+        size: function() {
+            return this.length;
         },
 
         remove: function () {
@@ -119,36 +125,74 @@ var Zepto = (function () {
         },
 
         is: function (selector) {
-            return this.dom.length > 0 && $(this.dom[0]).filter(selector).dom.length > 0;
+            return this.length > 0 && $(this.dom[0]).filter(selector).length > 0;
         },
 
         first: function (callback) {
-            this.dom = compact([this.dom[0]]);
-            return this;
+            return $(this.get(0));
         },
 
         last: function() {
-            this.dom = compact([this.dom[this.dom.length - 1]]);
-            return this;
+            return $(this.get(this.length - 1));
         },
 
         find: function (selector) {
-            return $(this.dom.map(function (el) {
+            var result;
+            if (this.length == 1) {
+                result = $$(this.get(0), selector);
+            } else {
+                result = flatten(this.dom.map(function(el) {
                     return $$(el, selector)
-                })
-                    .reduce(function (a, b) {
-                        return a.concat(b)
-                    }, [])
-            );
+                }));
+            }
+            return $(result);
         },
 
-        closest: function (selector) {
-            var node = this.dom[0].parentNode,
-                nodes = $$(document, selector);
-            while (node && nodes.indexOf(node) < 0) {
+        closest: function(selector, context) {
+            var node = this.dom[0],
+                nodes = $$(context !== undefined ? context : document, selector);
+            if (nodes.length === 0) {
+                node = null;
+            }
+            while(node && node !== document && nodes.indexOf(node) < 0) {
                 node = node.parentNode;
             }
-            return $(node && !(node === document) ? node : []);
+            return $(node);
+        },
+
+        parents: function(selector) {
+            var ancestors = [],
+                nodes = this.get();
+            while (nodes.length > 0) {
+                nodes = compact(nodes.map(function(node) {
+                    if ((node = node.parentNode) && node !== document && ancestors.indexOf(node) < 0) {
+                        ancestors.push(node);
+                        return node;
+                    }
+                }));
+            }
+            ancestors = $(ancestors);
+            if (selector === undefined) {
+                return ancestors;
+            } else {
+                return ancestors.filter(selector);
+            }
+        },
+
+        parent: function(selector) {
+            var node,
+                nodes = [];
+            this.each(function(el) {
+                if ((node = el.parentNode) && nodes.indexOf(node) < 0) {
+                    nodes.push(node);
+                }
+            });
+            nodes = $(nodes);
+            if (selector === undefined) {
+                return nodes;
+            } else {
+                return nodes.filter(selector);
+            }
         },
 
         pluck: function (property) {
@@ -175,7 +219,7 @@ var Zepto = (function () {
 
         html: function (html) {
             if (html === undefined) {
-                if (this.dom.length > 0) {
+                if (this.length > 0) {
                     return this.dom[0].innerHTML;
                 } else {
                     return null;
@@ -189,7 +233,7 @@ var Zepto = (function () {
 
         text: function (text) {
             if (text === undefined) {
-                if (this.dom.length > 0) {
+                if (this.length > 0) {
                     return this.dom[0].innerText;
                 } else {
                     return null;
@@ -203,9 +247,9 @@ var Zepto = (function () {
 
         attr: function (name, value) {
             if (typeof name == 'string' && value === undefined) {
-                if (this.dom.length > 0 && this.dom[0].nodeName === 'INPUT' && this.dom[0].type === 'text' && name === 'value') {
+                if (this.length > 0 && this.dom[0].nodeName === 'INPUT' && this.dom[0].type === 'text' && name === 'value') {
                     return this.dom[0].value;
-                } else if (this.dom.length > 0) {
+                } else if (this.length > 0) {
                     return this.dom[0].getAttribute(name) || undefined;
                 } else {
                     return null;

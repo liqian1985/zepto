@@ -1,8 +1,27 @@
 (function ($) {
+    var jsonpID = 0;
+
     function empty() {}
+
+    $.ajaxJSONP = function(options) {
+        var jsonpString,
+            script = document.createElement('script');
+        jsonpString = 'jsonp' + ++jsonpID;
+        window[jsonpString] = options.success;
+        $(script).attr({
+            src: options.url.replace(/callback=\?/, 'callback=' + jsonpString)
+        });
+        $('head').append(script);
+    };
+
     $.ajax = function(options){
         // { type, url, data, success, dataType, contentType }
         options = options || {};
+
+        if (options.url && /callback=\?/.test(options.url)) {
+            return $.ajaxJSONP(options);
+        }
+
         var data = options.data,
             callback = options.success || empty,
             errback = options.error || empty,
