@@ -5,7 +5,8 @@
             android = ua.match(/(Android)\s+([\d.]+)/),
             iphone = ua.match(/(iPhone\sOS)\s([\d_]+)/),
             ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
-            webos = ua.match(/(webOS)\/([\d.]+)/);
+            webos = ua.match(/(webOS)\/([\d.]+)/),
+            blackberry = ua.match(/(BlackBerry).*Version\/([\d.]+)/);
         if (android) {
             os.android = true;
             os.version = android[2];
@@ -23,6 +24,10 @@
         if (webos) {
             os.webos = true;
             os.version = webos[2];
+        }
+        if (blackberry) {
+            os.blackberry = true;
+            os.version = blackberry[2];
         }
         return os;
     }

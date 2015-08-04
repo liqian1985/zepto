@@ -128,6 +128,10 @@ var Zepto = (function () {
             return this.length > 0 && $(this.dom[0]).filter(selector).length > 0;
         },
 
+        eq: function(idx) {
+            return $(this.get(idx));
+        },
+
         first: function (callback) {
             return $(this.get(0));
         },

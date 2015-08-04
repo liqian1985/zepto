@@ -93,6 +93,14 @@ describe('zepto suite text', function () {
         });
     });
 
+    describe('eq suite text', function () {
+        it('验证$.fn.eq()', function () {
+            var result = $('div').eq(1);
+            expect($.fn.eq).toEqual(jasmine.any(Function));
+            expect(result.html()).toBe('innerdiv');
+        });
+    });
+
     describe('first suite text', function () {
         it('验证$.fn.first 方法', function () {
             var result = $('div').first();
