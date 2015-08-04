@@ -54,9 +54,9 @@ describe('zepto suite text', function () {
     describe('$.fn.remove() suite text', function () {
         it('验证$.fn.remove()方法', function () {
             var result = $('p');
-            //result.remove('span');
+            result.remove('span');
             expect($.fn.remove).toEqual(jasmine.any(Function));
-            //expect($('span').dom.length).toBe(0);
+            expect($('span').dom.length).toBe(0);
         });
     });
 

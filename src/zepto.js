@@ -106,8 +106,8 @@ var Zepto = (function () {
         },
 
         remove: function () {
-            return this.each(function (el) {
-                el.parentNode.removeChild(el);
+            return this.each(function () {
+                this.parentNode.removeChild(el);
             });
         },
 
@@ -182,8 +182,8 @@ var Zepto = (function () {
         parent: function(selector) {
             var node,
                 nodes = [];
-            this.each(function(el) {
-                if ((node = el.parentNode) && nodes.indexOf(node) < 0) {
+            this.each(function() {
+                if ((node = this.parentNode) && nodes.indexOf(node) < 0) {
                     nodes.push(node);
                 }
             });
@@ -225,8 +225,8 @@ var Zepto = (function () {
                     return null;
                 }
             } else {
-                return this.each(function (element) {
-                    element.innerHTML = html;
+                return this.each(function () {
+                    this.innerHTML = html;
                 });
             }
         },
@@ -239,8 +239,8 @@ var Zepto = (function () {
                     return null;
                 }
             } else {
-                return this.each(function (element) {
-                    element.innerText = text;
+                return this.each(function () {
+                    this.innerText = text;
                 });
             }
         },
@@ -255,13 +255,13 @@ var Zepto = (function () {
                     return null;
                 }
             } else {
-                this.each(function (element) {
+                this.each(function() {
                     if (typeof name == 'object') {
-                        for (k in name) {
-                            return element.setAttribute(k, name[k]);
+                        for (key in name) {
+                            this.setAttribute(key, name[key]);
                         }
                     } else {
-                        return element.setAttribute(name, value);
+                        this.setAttribute(name, value);
                     }
                 });
             }
@@ -278,8 +278,8 @@ var Zepto = (function () {
             if (typeof prop == 'string') {
                 css = prop + ":" + value;
             }
-            return this.each(function (el) {
-                el.style.cssText += ';' + css;
+            return this.each(function () {
+                this.style.cssText += ';' + css;
             });
         },
 
@@ -302,23 +302,23 @@ var Zepto = (function () {
         },
 
         addClass: function (name) {
-            return this.each(function (element) {
+            return this.each(function () {
                 //在这里学习了一下&&作为判断时的用法，好处是精简了代码，
                 // 坏处是不利于阅读，对读代码的人要求高些，可以适当的写注释
-                !$(element).hasClass(name) && (element.className += (element.className ? ' ' : '') + name);
+                !$(this).hasClass(name) && (this.className += (this.className ? ' ' : '') + name);
             });
         },
         removeClass: function (name) {
-            return this.each(function (element) {
-                element.className = element.className.replace(classRE(name), ' ').trim();
+            return this.each(function() {
+                this.className = this.className.replace(classRE(name), ' ').trim();
             });
         },
         toggleClass: function(name, when) {
-            return this.each(function(element) {
-                if ((when !== undefined && !when) || $(element).hasClass(name)) {
-                    $(element).removeClass(name);
+            return this.each(function() {
+                if ((when !== undefined && !when) || $(this).hasClass(name)) {
+                    $(this).removeClass(name);
                 } else {
-                    $(element).addClass(name);
+                    $(this).addClass(name);
                 }
             });
         }
@@ -339,8 +339,8 @@ var Zepto = (function () {
     for (key in adjacencyOperators) {
         $.fn[key] = (function (operator) {
             return function (html) {
-                return this.each(function (element) {
-                    element['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](operator, html);
+                return this.each(function() {
+                    this['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](operator, html);
                 });
             };
         })(adjacencyOperators[key]);

@@ -1,4 +1,4 @@
-/*(function($){
+(function($){
     var $$ = $.qsa,
         handlers = [],
         zid = 1;
@@ -61,13 +61,13 @@
         }
     };
     $.fn.bind = function(event, callback){
-        return this.each(function(element) {
-            add(element, event, callback);
+        return this.each(function(){
+            add(this, event, callback);
         });
     };
     $.fn.unbind = function(event, callback) {
-        return this.each(function(element) {
-            remove(element, event, callback);
+        return this.each(function() {
+            remove(this, event, callback);
         });
     };
     var eventMethods = [
@@ -86,7 +86,7 @@
     }
 
     $.fn.delegate = function(selector, event, callback) {
-        return this.each(function(element) {
+        return this.each(function(i, element) {
             add(element, event, callback, selector, function(e){
                 var target = e.target,
                     nodes = $$(element, selector),
@@ -108,8 +108,8 @@
     };
 
     $.fn.undelegate = function(selector, event, callback) {
-        return this.each(function(element) {
-            remove(element, event, callback, selector);
+        return this.each(function() {
+            remove(this, event, callback, selector);
         });
     }
 
@@ -124,11 +124,11 @@
     };
 
     $.fn.trigger = function(event) {
-        return this.each(function(element) {
+        return this.each(function() {
             var e = document.createEvent('Events');
-            element.dispatchEvent(e, e.initEvent(event, true, false));
+            this.dispatchEvent(e, e.initEvent(event, true, false));
         });
 
     };
-})(Zepto);*/
+})(Zepto);
 
