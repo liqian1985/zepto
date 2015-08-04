@@ -247,6 +247,16 @@ describe('zepto suite text', function () {
         });
     });
 
+    describe('val() suite text', function () {
+        it('验证val()', function () {
+            var result1 = $('input').val();
+            $('input').val('input');
+            expect($.fn.val).toEqual(jasmine.any(Function));
+            expect(result1).toBe('inputval');
+            expect($('input').dom[0].value).toBe('input');
+        });
+    });
+
     describe('offset suite text', function () {
         it('验证offset方法', function () {
             var result = $('div'),

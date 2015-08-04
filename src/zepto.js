@@ -252,7 +252,7 @@ var Zepto = (function () {
         attr: function (name, value) {
             if (typeof name == 'string' && value === undefined) {
                 if (this.length > 0 && this.dom[0].nodeName === 'INPUT' && this.dom[0].type === 'text' && name === 'value') {
-                    return this.dom[0].value;
+                    return this.val();
                 } else if (this.length > 0) {
                     return this.dom[0].getAttribute(name) || undefined;
                 } else {
@@ -285,6 +285,16 @@ var Zepto = (function () {
             return this.each(function () {
                 this.style.cssText += ';' + css;
             });
+        },
+
+        val: function(value) {
+            if (value === undefined) {
+                return (this.length > 0 ? this.dom[0].value : null);
+            } else {
+                return this.each(function() {
+                    this.value = value;
+                });
+            }
         },
 
         offset: function () {
