@@ -7,9 +7,12 @@
         var jsonpString,
             script = document.createElement('script');
         jsonpString = 'jsonp' + ++jsonpID;
-        window[jsonpString] = options.success;
+        window[jsonpString] = function() {
+            options.success();
+            delete window.jsonpString;
+        };
         $(script).attr({
-            src: options.url.replace(/callback=\?/, 'callback=' + jsonpString)
+            src: options.url.replace(/=\?/, '=' + jsonpString)
         });
         $('head').append(script);
     };
@@ -18,7 +21,7 @@
         // { type, url, data, success, dataType, contentType }
         options = options || {};
 
-        if (options.url && /callback=\?/.test(options.url)) {
+        if (options.url && /=\?/.test(options.url)) {
             return $.ajaxJSONP(options);
         }
 

@@ -8,13 +8,6 @@ var Zepto = (function () {
         document = window.document,
         undefined;
 
-    // fix for iOS 3.2
-    if (String.prototype.trim === undefined) {
-        String.prototype.trim = function () {
-            return this.replace(/^\s+/, '').replace(/\s+$/, '');
-        };
-    }
-
     function classRE(name) {
         return new RegExp("(^|\\s)" + name + "(\\s|$)");
     }
@@ -221,16 +214,12 @@ var Zepto = (function () {
             return $(this.pluck('nextElementSibling'));
         },
 
-        html: function (html) {
+        html: function(html) {
             if (html === undefined) {
-                if (this.length > 0) {
-                    return this.dom[0].innerHTML;
-                } else {
-                    return null;
-                }
+                return (this.length > 0 ? this.dom[0].innerHTML : null);
             } else {
-                return this.each(function () {
-                    this.innerHTML = html;
+                return this.each(function (idx) {
+                    this.innerHTML = typeof html == 'function' ? html(idx, this.innerHTML) : html
                 });
             }
         },
@@ -249,28 +238,6 @@ var Zepto = (function () {
             }
         },
 
-        attr: function (name, value) {
-            if (typeof name == 'string' && value === undefined) {
-                if (this.length > 0 && this.dom[0].nodeName === 'INPUT' && this.dom[0].type === 'text' && name === 'value') {
-                    return this.val();
-                } else if (this.length > 0) {
-                    return this.dom[0].getAttribute(name) || undefined;
-                } else {
-                    return null;
-                }
-            } else {
-                this.each(function() {
-                    if (typeof name == 'object') {
-                        for (key in name) {
-                            this.setAttribute(key, name[key]);
-                        }
-                    } else {
-                        this.setAttribute(name, value);
-                    }
-                });
-            }
-        },
-
         css: function (prop, value) {
             if (value === undefined && typeof prop == 'string') {
                 return this.dom[0].style[camelize(prop)];
@@ -284,6 +251,35 @@ var Zepto = (function () {
             }
             return this.each(function () {
                 this.style.cssText += ';' + css;
+            });
+        },
+
+        attr: function (name, value) {
+            if (typeof name == 'string' && value === undefined) {
+                if (this.length > 0 && this.dom[0].nodeName === 'INPUT' && this.dom[0].type === 'text' && name === 'value') {
+                    return this.val();
+                } else if (this.length > 0) {
+                    return this.dom[0].getAttribute(name) || undefined;
+                } else {
+                    return null;
+                }
+            } else {
+                this.each(function(idx) {
+                    if (typeof name == 'object') {
+                        for (key in name) {
+                            this.setAttribute(key, name[key]);
+                        }
+                    } else {
+                        this.setAttribute(name, typeof value == 'function' ? value(idx, this.getAttribute(name)) : value);
+                    }
+
+                });
+            }
+        },
+
+        removeAttr: function(name) {
+            return this.each(function() {
+                this.removeAttribute(name);
             });
         },
 
@@ -305,6 +301,10 @@ var Zepto = (function () {
                 width: obj.width,
                 height: obj.height
             };
+        },
+
+        getStyle: function(property) {
+            return document.defaultView.getComputedStyle(this.dom[0], '').getPropertyValue(property);
         },
 
         index: function (element) {
@@ -353,13 +353,45 @@ var Zepto = (function () {
     for (key in adjacencyOperators) {
         $.fn[key] = (function (operator) {
             return function (html) {
-                return this.each(function() {
-                    this['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](operator, html);
+                return this.each(function(element) {
+                    if (html instanceof Z && html.dom[0]) {
+                        if (html instanceof Z) {
+                            dom = html.dom;
+                            if (operator == "afterBegin" || operator == "afterEnd") {
+                                dom.reverse();
+                            }
+                            for (i = 0; i < dom.length; i++) {
+                                element['insertAdjacentElement'](operator, dom[i]);
+                            }
+                        }
+                    } else {
+                        element['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](operator, html);
+                    }
+
                 });
             };
         })(adjacencyOperators[key]);
     }
+/*
+ for (key in adjacencyOperators)
+ $.fn[key] = (function(operator) {
+ return function(html){
+ return this.each(function(index, element){
+ if (html instanceof Z) {
+ dom = html.dom;
+ if (operator == "afterBegin" || operator == "afterEnd")
+ for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[dom.length-i-1]);
+ else
+ for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[i]);
+ } else {
+ element['insertAdjacent'+(html instanceof Element ? 'Element' : 'HTML')](operator, html);
+ }
+ });
+ };
+ })(adjacencyOperators[key]);
 
+
+*/
     Z.prototype = $.fn;
 
     return $;
