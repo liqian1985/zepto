@@ -7,8 +7,8 @@
         var jsonpString,
             script = document.createElement('script');
         jsonpString = 'jsonp' + ++jsonpID;
-        window[jsonpString] = function() {
-            options.success();
+        window[jsonpString] = function(data) {
+            options.success(data);
             delete window.jsonpString;
         };
         $(script).attr({

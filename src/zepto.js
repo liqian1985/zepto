@@ -6,7 +6,8 @@ var Zepto = (function () {
         fragmentRE,
         container,
         document = window.document,
-        undefined;
+        undefined,
+        getComputedStyle = document.defaultView.getComputedStyle;
 
     function classRE(name) {
         return new RegExp("(^|\\s)" + name + "(\\s|$)");
@@ -40,23 +41,24 @@ var Zepto = (function () {
     }
 
     function Z(dom, selector) {
-        this.dom = dom || [];
-        this.length = this.dom.length;
-        this.selector = selector || '';
+        dom = dom || [];
+        dom.__proto__ = Z.prototype;
+        dom.selector = selector || '';
+        return dom;
     }
 
     function $(selector, context) {
         if (selector == document) {
-            return new Z;
+            return Z;
         } else if (context !== undefined) {
             return $(context).find(selector);
         } else if (typeof selector === 'function') {
             return $(document).ready(selector);
+        } else if (selector instanceof Z) {
+            return selector;
         } else {
             var dom;
-            if (selector instanceof Z) {
-                dom = selector.dom;
-            } else if (selector instanceof Array) {
+            if (selector instanceof Array) {
                 dom = compact(selector);
             } else if (selector instanceof Element || selector === window) {
                 dom = [selector];
@@ -65,7 +67,7 @@ var Zepto = (function () {
             } else {
                 dom = $$(document, selector);
             }
-            return new Z(dom, selector);
+            return Z(dom, selector);
         }
     }
 
@@ -81,6 +83,13 @@ var Zepto = (function () {
     }
 
     $.fn = {
+        forEach: [].forEach,
+        map: [].map,
+        reduce: [].reduce,
+        push: [].push,
+        indexOf: [].indexOf,
+        concat: [].concat,
+
         ready: function (callback) {
             document.addEventListener('DOMContentLoaded', callback, false);
             return this;
@@ -88,9 +97,9 @@ var Zepto = (function () {
 
         get: function (idx) {
             if (idx === undefined) {
-                return this.dom;
+                return this;
             } else {
-                return this.dom[idx];
+                return this[idx];
             }
         },
 
@@ -105,48 +114,48 @@ var Zepto = (function () {
         },
 
         each: function (callback) {
-            this.dom.forEach(function (value) {
+            this.forEach(function (value) {
                 callback.apply(value, arguments);
             });
             return this;
         },
 
         filter: function (selector) {
-            return $(this.dom.filter(function (el) {
-                return $$(el.parentNode, selector).indexOf(el) >= 0;
+            return $([].filter.call(this, function(element) {
+                return $$(element.parentNode, selector).indexOf(element) >= 0;
             }));
         },
 
         is: function (selector) {
-            return this.length > 0 && $(this.dom[0]).filter(selector).length > 0;
+            return this.length > 0 && $(this[0]).filter(selector).length > 0;
         },
 
         eq: function(idx) {
-            return $(this.get(idx));
+            return $(this[idx]);
         },
 
-        first: function (callback) {
-            return $(this.get(0));
+        first: function() {
+            return $(this[0]);
         },
 
         last: function() {
-            return $(this.get(this.length - 1));
+            return $(this[this.length - 1]);
         },
 
         find: function (selector) {
             var result;
             if (this.length == 1) {
-                result = $$(this.get(0), selector);
+                result = $$(this[0], selector);
             } else {
-                result = flatten(this.dom.map(function(el) {
-                    return $$(el, selector)
+                result = flatten(this.map(function(el){
+                    return $$(el, selector);
                 }));
             }
             return $(result);
         },
 
         closest: function(selector, context) {
-            var node = this.dom[0],
+            var node = this[0],
                 nodes = $$(context !== undefined ? context : document, selector);
             if (nodes.length === 0) {
                 node = null;
@@ -159,7 +168,7 @@ var Zepto = (function () {
 
         parents: function(selector) {
             var ancestors = [],
-                nodes = this.get();
+                nodes = this;
             while (nodes.length > 0) {
                 nodes = compact(nodes.map(function(node) {
                     if ((node = node.parentNode) && node !== document && ancestors.indexOf(node) < 0) {
@@ -193,7 +202,7 @@ var Zepto = (function () {
         },
 
         pluck: function (property) {
-            return this.dom.map(function (element) {
+            return this.map(function (element) {
                 return element[property];
             });
         },
@@ -216,7 +225,7 @@ var Zepto = (function () {
 
         html: function(html) {
             if (html === undefined) {
-                return (this.length > 0 ? this.dom[0].innerHTML : null);
+                return (this.length > 0 ? this[0].innerHTML : null);
             } else {
                 return this.each(function (idx) {
                     this.innerHTML = typeof html == 'function' ? html(idx, this.innerHTML) : html
@@ -227,7 +236,7 @@ var Zepto = (function () {
         text: function (text) {
             if (text === undefined) {
                 if (this.length > 0) {
-                    return this.dom[0].innerText;
+                    return this[0].innerText;
                 } else {
                     return null;
                 }
@@ -238,28 +247,12 @@ var Zepto = (function () {
             }
         },
 
-        css: function (prop, value) {
-            if (value === undefined && typeof prop == 'string') {
-                return this.dom[0].style[camelize(prop)];
-            }
-            css = "";
-            for (k in prop) {
-                css += k + ':' + prop[k] + ';';
-            }
-            if (typeof prop == 'string') {
-                css = prop + ":" + value;
-            }
-            return this.each(function () {
-                this.style.cssText += ';' + css;
-            });
-        },
-
         attr: function (name, value) {
             if (typeof name == 'string' && value === undefined) {
-                if (this.length > 0 && this.dom[0].nodeName === 'INPUT' && this.dom[0].type === 'text' && name === 'value') {
+                if (this.length > 0 && this[0].nodeName === 'INPUT' && this[0].type === 'text' && name === 'value') {
                     return this.val();
                 } else if (this.length > 0) {
-                    return this.dom[0].getAttribute(name) || undefined;
+                    return this[0].getAttribute(name) || undefined;
                 } else {
                     return null;
                 }
@@ -285,7 +278,7 @@ var Zepto = (function () {
 
         val: function(value) {
             if (value === undefined) {
-                return (this.length > 0 ? this.dom[0].value : null);
+                return (this.length > 0 ? this[0].value : null);
             } else {
                 return this.each(function() {
                     this.value = value;
@@ -294,7 +287,7 @@ var Zepto = (function () {
         },
 
         offset: function () {
-            var obj = this.dom[0].getBoundingClientRect();
+            var obj = this[0].getBoundingClientRect();
             return {
                 left: obj.left + document.body.scrollLeft,
                 top: obj.top + document.body.scrollTop,
@@ -303,16 +296,29 @@ var Zepto = (function () {
             };
         },
 
-        getStyle: function(property) {
-            return document.defaultView.getComputedStyle(this.dom[0], '').getPropertyValue(property);
+        css: function (prop, value) {
+            if (value === undefined && typeof property == 'string') {
+                this[0].style[camelize(property)] ||
+                getComputedStyle(this[0], '').getPropertyValue(property);
+            }
+            css = "";
+            for (k in prop) {
+                css += k + ':' + prop[k] + ';';
+            }
+            if (typeof prop == 'string') {
+                css = prop + ":" + value;
+            }
+            return this.each(function () {
+                this.style.cssText += ';' + css;
+            });
         },
 
         index: function (element) {
-            return this.dom.indexOf($(element).get(0));
+            return this.indexOf($(element)[0]);
         },
 
         hasClass: function (name) {
-            return classRE(name).test(this.dom[0].className);
+            return classRE(name).test(this[0].className);
         },
 
         addClass: function (name) {
@@ -356,7 +362,7 @@ var Zepto = (function () {
                 return this.each(function(element) {
                     if (html instanceof Z && html.dom[0]) {
                         if (html instanceof Z) {
-                            dom = html.dom;
+                            dom = html;
                             if (operator == "afterBegin" || operator == "afterEnd") {
                                 dom.reverse();
                             }
