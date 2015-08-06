@@ -43,6 +43,7 @@
             element.addEventListener(handler.e, delegate || fn, false);
         });
     }
+
     function remove(element, events, fn, selector){
         //var id = zid(element);
         (events || '').split(/\s/).forEach(function(event){
@@ -52,29 +53,45 @@
             });
         });
     }
+
     $.event = {
         add: function(element, events, fn) {
             add(element, events, fn);
         },
+
         remove: function(element, events, fn) {
             remove(element, events, fn);
         }
     };
+
     $.fn.bind = function(event, callback){
         return this.each(function(){
             add(this, event, callback);
         });
     };
+
     $.fn.unbind = function(event, callback) {
         return this.each(function() {
             remove(this, event, callback);
         });
     };
+
+    $.fn.one = function(event, callback) {
+        return this.each(function() {
+            var self = this;
+            add(this, event, function wrapper() {
+                callback();
+                remove(self, event, arguments.callee);
+            });
+        });
+    };
+
     var eventMethods = [
         'preventDefault',
         'stopImmediatePropagation',
         'stopPropagation'
     ];
+
     function createProxy(event) {
         var proxy = $.extend({originalEvent: event}, event);
         eventMethods.forEach(function(key) {

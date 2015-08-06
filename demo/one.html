@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>one方法的测试demo</title>
+</head>
+<body>
+    <div id="demo">
+        <p><button>点我有惊喜</button></p>
+
+        <p>one方法的测试demo</p>
+
+    </div>
+    <script type="text/javascript" src="../src/zepto.js"></script>
+    <script type="text/javascript" src="../src/event.js"></script>
+    <script type="text/javascript">
+        function bindEvt() {
+            $('p').one('click', function () {
+                alert($(this).html());
+            });
+        }
+        bindEvt();
+    </script>
+</body>
+</html>
