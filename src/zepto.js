@@ -252,10 +252,11 @@ var Zepto = (function () {
                 if (this.length > 0 && this[0].nodeName === 'INPUT' && this[0].type === 'text' && name === 'value') {
                     return this.val();
                 } else if (this.length > 0) {
-                    return this[0].getAttribute(name) || undefined;
+                    return this[0].getAttribute(name) || (name in this[0] ? this[0][name] : undefined);
                 } else {
                     return null;
                 }
+
             } else {
                 this.each(function(idx) {
                     if (typeof name == 'object') {
@@ -274,6 +275,10 @@ var Zepto = (function () {
             return this.each(function() {
                 this.removeAttribute(name);
             });
+        },
+
+        data: function(name, value) {
+            return this.attr('data-' + name, value);
         },
 
         val: function(value) {

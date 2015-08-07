@@ -247,6 +247,15 @@ describe('zepto suite text', function () {
         });
     });
 
+    describe('$.data suite text', function () {
+        it('验证$函数返回值中包含data方法', function () {
+            var result = $('div');
+            result.data('name', 'box');
+            expect($.fn.data).toEqual(jasmine.any(Function));
+            expect(result[0].getAttribute('name')).toBe('box');
+        });
+    });
+
     describe('val() suite text', function () {
         it('验证val()', function () {
             var result1 = $('input').val();

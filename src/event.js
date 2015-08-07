@@ -143,7 +143,7 @@
     $.fn.trigger = function(event) {
         return this.each(function() {
             var e = document.createEvent('Events');
-            this.dispatchEvent(e, e.initEvent(event, true, false));
+            this.dispatchEvent(e, e.initEvent(event, true, true));
         });
 
     };
