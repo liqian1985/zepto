@@ -128,14 +128,13 @@
         return this;
     };
 
-    $.param = function(obj, v) {
+    $.param = function(obj, v){
         var s = [],
             rec = '',
-            add;
-        add = function(key, value) {
-            if(v) s[s.length] = encodeURIComponent(v + "[" + key +"]") + '=' + encodeURIComponent(value);
-            else s[s.length] = encodeURIComponent(key) + '=' + encodeURIComponent(value);
-        };
+            add = function(key, value){
+                if(v) s[s.length] = encodeURIComponent(v + "[" + key +"]") + '=' + encodeURIComponent(value);
+                else s[s.length] = encodeURIComponent(key) + '=' + encodeURIComponent(value);
+            };
         for(var i in obj){
             if(obj[i] instanceof Array || obj[i] instanceof Object)
                 rec += (s.length + rec.length > 0 ? '&' : '') + $.param(obj[i], (v ? v + "[" + i + "]" : i));
@@ -144,5 +143,4 @@
         };
         return s.join("&").replace(/%20/g, "+") + rec;
     };
-
 })(Zepto);

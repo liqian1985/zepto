@@ -159,6 +159,24 @@ describe('zepto suite text', function () {
         });
     });
 
+    describe('children suite text', function () {
+        it('验证children()', function () {
+            var result = $('div');
+            expect($.fn.children).toEqual(jasmine.any(Function));
+            expect(result.children().length).toBe(5);
+            expect(result.children('input').length).toBe(1);
+        });
+    });
+
+    describe('siblings suite text', function () {
+        it('验证 siblings()', function () {
+            var result = $('#item1');
+            expect($.fn.siblings).toEqual(jasmine.any(Function));
+            expect(result.siblings().length).toBe(1);
+            expect(result.siblings('div').length).toBe(0);
+        });
+    });
+
     describe('show suite text', function () {
         it('验证 show 方法', function () {
             var result = $('div');
