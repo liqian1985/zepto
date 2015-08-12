@@ -19,10 +19,8 @@ var Zepto = (function () {
         });
     }
 
-    function flatten(array){
-        return array.reduce(function(a, b){
-            return a.concat(b);
-        }, []);
+    function flatten(array) {
+        return [].concat.apply([], array);
     }
 
     function camelize(str) {
@@ -31,7 +29,18 @@ var Zepto = (function () {
         });
     }
 
-    fragmentRE = /^\s*<.+>/;
+    function uniq(array) {
+        var r = [];
+        for(var i = 0, n = array.length; i < n; i++) {
+            if (r.indexOf(array[i]) < 0) {
+                r.push(array[i]);
+            }
+        }
+        return r;
+    }
+
+    fragmentRE = /^\s*<[^>]+>/;
+
     container = document.createElement("div");
     function fragment(html) {
         container.innerHTML = ('' + html).trim();
@@ -48,9 +57,10 @@ var Zepto = (function () {
     }
 
     function $(selector, context) {
-        if (selector == document) {
-            return Z;
-        } else if (context !== undefined) {
+        if (!selector) {
+            return Z();
+        }
+        if (context !== undefined) {
             return $(context).find(selector);
         } else if (typeof selector === 'function') {
             return $(document).ready(selector);
@@ -60,8 +70,9 @@ var Zepto = (function () {
             var dom;
             if (selector instanceof Array) {
                 dom = compact(selector);
-            } else if (selector instanceof Element || selector === window) {
+            } else if (selector instanceof Element || selector === window || selector === document) {
                 dom = [selector];
+                selector = null;
             } else if (fragmentRE.test(selector)) {
                 dom = fragment(selector);
             } else {
@@ -128,6 +139,25 @@ var Zepto = (function () {
 
         is: function (selector) {
             return this.length > 0 && $(this[0]).filter(selector).length > 0;
+        },
+
+        not: function(selector) {
+            var nodes = [];
+            if (typeof selector == 'function' && selector.call !== undefined){
+                this.each(function(idx) {
+                    if (!selector.call(this, idx)) {
+                        nodes.push(this);
+                    }
+                });
+            } else {
+                var ignores = slice.call(typeof selector === "string" ?
+                    this.filter(selector) :
+                    selector instanceof NodeList ? selector : $(selector));
+                slice.call(this).forEach(function(el){
+                    if (ignores.indexOf(el) < 0) nodes.push(el);
+                });
+            }
+            return $(nodes);
         },
 
         eq: function(idx) {
@@ -251,7 +281,7 @@ var Zepto = (function () {
                 return (this.length > 0 ? this[0].innerHTML : null);
             } else {
                 return this.each(function (idx) {
-                    this.innerHTML = typeof html == 'function' ? html(idx, this.innerHTML) : html
+                    this.innerHTML = typeof html == 'function' ? html.call(this, idx, this.innerHTML) : html
                 });
             }
         },
@@ -287,9 +317,8 @@ var Zepto = (function () {
                             this.setAttribute(key, name[key]);
                         }
                     } else {
-                        this.setAttribute(name, typeof value == 'function' ? value(idx, this.getAttribute(name)) : value);
+                        this.setAttribute(name, typeof value == 'function' ? value.call(this, idx, this.getAttribute(name)) : value);
                     }
-
                 });
             }
         },
