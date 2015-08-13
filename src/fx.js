@@ -1,4 +1,4 @@
-(function ($) {
+(function($, undefined){
     $.fn.anim = function(properties, duration, ease, callback){
         var transforms = [],
             opacity,
@@ -9,7 +9,7 @@
             }
             else {
                 transforms.push(key + '(' + properties[key] + ')');
-                typeof callback == 'function' && this.one('webkitTransitionEnd', callback);
+                $.isFunction(callback) && this.one('webkitTransitionEnd', callback);
             }
         }
         return this.css({

@@ -10,7 +10,7 @@ var Zepto = (function () {
         getComputedStyle = document.defaultView.getComputedStyle;
 
     function classRE(name) {
-        return new RegExp("(^|\\s)" + name + "(\\s|$)");
+        return new RegExp('(^|\\s)' + name + '(\\s|$)');
     }
 
     function compact(array) {
@@ -39,9 +39,15 @@ var Zepto = (function () {
         return r;
     }
 
+    /*function isF(value) {
+        return ({}).toString.call(obj) == "[object Function]";
+    }*/
+    function isO(value) { return value instanceof Object }
+    function isA(value) { return value instanceof Array }
+
     fragmentRE = /^\s*<[^>]+>/;
 
-    container = document.createElement("div");
+    container = document.createElement('div');
     function fragment(html) {
         container.innerHTML = ('' + html).trim();
         var result = slice.call(container.childNodes);
@@ -62,13 +68,14 @@ var Zepto = (function () {
         }
         if (context !== undefined) {
             return $(context).find(selector);
-        } else if (typeof selector === 'function') {
+        } else if (typeof selector == 'function') {
+        /*} else if (sF(selector)) {*/
             return $(document).ready(selector);
         } else if (selector instanceof Z) {
             return selector;
         } else {
             var dom;
-            if (selector instanceof Array) {
+            if (isA(selector)) {
                 dom = compact(selector);
             } else if (selector instanceof Element || selector === window || selector === document) {
                 dom = [selector];
@@ -100,6 +107,9 @@ var Zepto = (function () {
         push: [].push,
         indexOf: [].indexOf,
         concat: [].concat,
+        /*isFunction: isF,*/
+        isObject: isO,
+        isArray: isA,
 
         ready: function (callback) {
             document.addEventListener('DOMContentLoaded', callback, false);
@@ -143,6 +153,8 @@ var Zepto = (function () {
 
         not: function(selector) {
             var nodes = [];
+            /*if (isF(selector) && selector.call !== undefined)*/
+
             if (typeof selector == 'function' && selector.call !== undefined){
                 this.each(function(idx) {
                     if (!selector.call(this, idx)) {
@@ -150,7 +162,7 @@ var Zepto = (function () {
                     }
                 });
             } else {
-                var ignores = slice.call(typeof selector === "string" ?
+                var ignores = slice.call(typeof selector == 'strin' ?
                     this.filter(selector) :
                     selector instanceof NodeList ? selector : $(selector));
                 slice.call(this).forEach(function(el){
@@ -283,6 +295,10 @@ var Zepto = (function () {
                 return this.each(function (idx) {
                     this.innerHTML = typeof html == 'function' ? html.call(this, idx, this.innerHTML) : html
                 });
+                /*
+                return this.each(function(idx){
+                    this.innerHTML = isF(html) ? html.call(this, idx, this.innerHTML) : html
+                });*/
             }
         },
 
@@ -312,7 +328,7 @@ var Zepto = (function () {
 
             } else {
                 this.each(function(idx) {
-                    if (typeof name == 'object') {
+                    if (isO(name)) {
                         for (key in name) {
                             this.setAttribute(key, name[key]);
                         }
@@ -358,12 +374,12 @@ var Zepto = (function () {
                 this[0].style[camelize(property)] ||
                 getComputedStyle(this[0], '').getPropertyValue(property);
             }
-            css = "";
+            css = '';
             for (k in prop) {
                 css += k + ':' + prop[k] + ';';
             }
             if (typeof prop == 'string') {
-                css = prop + ":" + value;
+                css = prop + ':' + value;
             }
             return this.each(function () {
                 this.style.cssText += ';' + css;
@@ -420,7 +436,7 @@ var Zepto = (function () {
                     if (html instanceof Z && html.dom[0]) {
                         if (html instanceof Z) {
                             dom = html;
-                            if (operator == "afterBegin" || operator == "afterEnd") {
+                            if (operator == 'afterBegin' || operator == 'afterEnd') {
                                 dom.reverse();
                             }
                             for (i = 0; i < dom.length; i++) {
@@ -435,26 +451,7 @@ var Zepto = (function () {
             };
         })(adjacencyOperators[key]);
     }
-/*
- for (key in adjacencyOperators)
- $.fn[key] = (function(operator) {
- return function(html){
- return this.each(function(index, element){
- if (html instanceof Z) {
- dom = html.dom;
- if (operator == "afterBegin" || operator == "afterEnd")
- for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[dom.length-i-1]);
- else
- for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[i]);
- } else {
- element['insertAdjacent'+(html instanceof Element ? 'Element' : 'HTML')](operator, html);
- }
- });
- };
- })(adjacencyOperators[key]);
 
-
-*/
     Z.prototype = $.fn;
 
     return $;
