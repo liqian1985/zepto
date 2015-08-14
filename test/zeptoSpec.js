@@ -182,7 +182,7 @@ describe('zepto suite text', function () {
             var result = $('div');
             result.show();
             expect($.fn.show).toEqual(jasmine.any(Function));
-            expect(result[0].style.display).toBe('block');
+            expect(result[0].style.display).toBe('');
         });
     });
 

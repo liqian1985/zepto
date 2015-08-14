@@ -7,6 +7,8 @@ var Zepto = (function () {
         container,
         document = window.document,
         undefined,
+        classList,
+        elemDisplay = {},
         getComputedStyle = document.defaultView.getComputedStyle;
 
     function classRE(name) {
@@ -27,6 +29,18 @@ var Zepto = (function () {
         return str.replace(/-+(.)?/g, function (match, chr) {
             return chr ? chr.toUpperCase() : '';
         });
+    }
+
+    function defaultDisplay(nodeName) {
+        if (!elemDisplay[nodeName]) {
+            var elem = document.createElement(nodeName);
+            document.body.insertAdjacentElement("beforeEnd", elem);
+            var display = getComputedStyle(elem, '').getPropertyValue("display");
+            elem.parentNode.removeChild(elem);
+            display == "none" && (display = "block");
+            elemDisplay[nodeName] = display
+        }
+        return elemDisplay[nodeName]
     }
 
     function uniq(array) {
@@ -272,12 +286,22 @@ var Zepto = (function () {
             });
         },
 
-        show: function () {
-            return this.css('display', 'block');
+        show: function(){
+            return this.each(function() {
+                this.style.display == "none" && (this.style.display = null);
+                if (getComputedStyle(this, '').getPropertyValue("display") == "none") {
+                    this.style.display = defaultDisplay(this.nodeName);
+                }
+            })
         },
 
-        hide: function () {
-            return this.css('display', 'none');
+        hide: function(){
+            return this.css("display", "none");
+        },
+
+        toggle: function(){
+            this.css("display") == "none" && this.show() || this.hide();
+            return this;
         },
 
         prev: function () {
@@ -395,16 +419,24 @@ var Zepto = (function () {
         },
 
         addClass: function (name) {
-            return this.each(function () {
-                //在这里学习了一下&&作为判断时的用法，好处是精简了代码，
-                // 坏处是不利于阅读，对读代码的人要求高些，可以适当的写注释
-                !$(this).hasClass(name) && (this.className += (this.className ? ' ' : '') + name);
-            });
+            return this.each(function() {
+                classList = [];
+                name.split(/\s+/g).forEach(function(klass) {
+                    if (!$(this).hasClass(klass)) {
+                        classList.push(klass)
+                    }
+                }, this);
+                classList.length && (this.className += (this.className ? " " : "") + classList.join(" "))
+            })
         },
         removeClass: function (name) {
             return this.each(function() {
-                this.className = this.className.replace(classRE(name), ' ').trim();
-            });
+                classList = this.className;
+                name.split(/\s+/g).forEach(function(klass) {
+                    classList = classList.replace(classRE(klass), " ")
+                });
+                this.className = classList.trim()
+            })
         },
         toggleClass: function(name, when) {
             return this.each(function() {
