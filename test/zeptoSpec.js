@@ -195,6 +195,17 @@ describe('zepto suite text', function () {
         });
     });
 
+    describe('replaceWith suite text', function () {
+        it('验证replaceWith()', function () {
+            var result = $('#item2');
+            result.replaceWith('<li id="replaceli">replaceWith</li>');
+            expect($.fn.replaceWith).toEqual(jasmine.any(Function));
+            expect($('#item2').length).toBe(0);
+            expect($('li')[1].id).toBe('replaceli');
+            expect($('#replaceli').html()).toBe('replaceWith');
+        });
+    });
+
     describe('hide suite text', function () {
         it('验证 hide 方法', function () {
             var result = $('div');

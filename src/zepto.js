@@ -305,6 +305,15 @@ var Zepto = (function () {
             })
         },
 
+        replaceWith: function(newContent) {
+            return this.each(function() {
+                var element = $(this),
+                    prev = element.prev();
+                element.remove();
+                prev.after(newContent);
+            });
+        },
+
         hide: function(){
             return this.css("display", "none");
         },
@@ -457,6 +466,16 @@ var Zepto = (function () {
                     $(this).addClass(name);
                 }
             });
+        },
+        submit: function () {
+            return this.each(function () {
+                try {
+                    // Submit first form element
+                    this.submit();
+                    return;
+                } catch(e) {};
+            });
+
         }
     };
 
