@@ -177,6 +177,15 @@ describe('zepto suite text', function () {
         });
     });
 
+    describe('empty suite text', function () {
+        it('验证empty()', function () {
+            var result = $('div');
+            result.empty();
+            expect($.fn.empty).toEqual(jasmine.any(Function));
+            expect(result.html()).toBe('');
+        });
+    });
+
     describe('show suite text', function () {
         it('验证 show 方法', function () {
             var result = $('div');

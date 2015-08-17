@@ -96,12 +96,15 @@ var Zepto = (function () {
                 selector = null;
             } else if (fragmentRE.test(selector)) {
                 dom = fragment(selector);
+            } else if (selector.nodeType && selector.nodeType == 3) {
+                dom = [selector];
             } else {
                 dom = $$(document, selector);
             }
             return Z(dom, selector);
         }
     }
+
 
     $.extend = function (target, source) {
         for (key in source) {
@@ -126,6 +129,7 @@ var Zepto = (function () {
         isArray: isA,
 
         ready: function (callback) {
+            if (document.readyState == 'complete' || document.readyState == 'loaded') callback();
             document.addEventListener('DOMContentLoaded', callback, false);
             return this;
         },
@@ -280,6 +284,12 @@ var Zepto = (function () {
             return selector === undefined ? $(nodes) : $(nodes).filter(selector);
         },
 
+        empty: function() {
+            return this.each(function() {
+                this.innerHTML = '';
+            })
+        },
+
         pluck: function (property) {
             return this.map(function (element) {
                 return element[property];
@@ -384,6 +394,7 @@ var Zepto = (function () {
         },
 
         offset: function () {
+            if(this.length==0) return null;
             var obj = this[0].getBoundingClientRect();
             return {
                 left: obj.left + document.body.scrollLeft,
