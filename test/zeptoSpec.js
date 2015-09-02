@@ -82,6 +82,13 @@ describe('zepto suite text', function () {
         });
     });
 
+    describe('add suite text', function () {
+        it('验证$.fn.add()', function () {
+            var result = $('div');
+            result.add();
+        });
+    });
+
     describe('is suite text', function () {
         it('验证$.fn.is方法', function () {
             var result = $('#ul1'),
@@ -195,7 +202,7 @@ describe('zepto suite text', function () {
         });
     });
 
-    describe('replaceWith suite text', function () {
+    /*describe('replaceWith suite text', function () {
         it('验证replaceWith()', function () {
             var result = $('#item2');
             result.replaceWith('<li id="replaceli">replaceWith</li>');
@@ -204,13 +211,22 @@ describe('zepto suite text', function () {
             expect($('li')[1].id).toBe('replaceli');
             expect($('#replaceli').html()).toBe('replaceWith');
         });
-    });
+    });*/
 
     describe('hide suite text', function () {
         it('验证 hide 方法', function () {
             var result = $('div');
             result.hide();
             expect($.fn.hide).toEqual(jasmine.any(Function));
+            expect(result[0].style.display).toBe('none');
+        });
+    });
+
+    describe('toggle suite text', function () {
+        it('验证toggle()', function () {
+            var result = $('div');
+            result.toggle();
+            expect($.fn.toggle).toEqual(jasmine.any(Function));
             expect(result[0].style.display).toBe('none');
         });
     });
@@ -270,6 +286,15 @@ describe('zepto suite text', function () {
             expect(result[0].getAttribute('data')).toBe('123');
             expect(result[1].getAttribute('data')).toBe('123');
             expect($('input').attr('value')).toBe('inputval');
+        });
+    });
+
+    describe('removeAttr suite text', function () {
+        it('验证removeAttr()', function () {
+            var result = $('div');
+            result.removeAttr('name');
+            expect($.fn.removeAttr).toEqual(jasmine.any(Function));
+            expect(result[0].getAttribute('name')).toBe(null);
         });
     });
 
@@ -360,7 +385,7 @@ describe('zepto suite text', function () {
         });
     });
 
-    describe('append suite text', function () {
+   /* describe('append suite text', function () {
         it ('验证$方法返回值中包含append方法', function () {
             var result = $('div'),
                 appendB;
@@ -387,7 +412,7 @@ describe('zepto suite text', function () {
             expect(prependB[0].parentNode.id).toBe('text');
         });
     });
-
+*/
     describe('addClass suite text', function () {
         it('验证$方法返回值中包含addClass方法', function () {
             var result = $('div');

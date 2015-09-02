@@ -1,20 +1,40 @@
 var Zepto = (function () {
     var undefined, key, css, $$, classList,
         emptyArray = [], slice = emptyArray.slice,
-        document = window.document, body = document.body,
+        document = window.document,
         elementDisplay = {}, classCache = {},
         getComputedStyle = document.defaultView.getComputedStyle,
         fragmentRE = /^\s*<[^>]+>/,
         container = document.createElement('div');
 
-    function isF(value) { return ({}).toString.call(value) == "[object Function]" }
-    function isO(value) { return value instanceof Object }
-    function isA(value) { return value instanceof Array }
+    function isF(value) {
+        return ({}).toString.call(value) == "[object Function]";
+    }
+    function isO(value) {
+        return value instanceof Object;
+    }
+    function isA(value) {
+        return value instanceof Array;
+    }
 
-    function compact(array) { return array.filter(function(item){ return item !== undefined && item !== null }) }
-    function flatten(array) { return [].concat.apply([], array) }
-    function camelize(str)  { return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
-    function uniq(array)    { return array.filter(function(item,index,array){ return array.indexOf(item) == index }) }
+    function compact(array) {
+        return array.filter(function(item){
+            return item !== undefined && item !== null;
+            }
+        )
+    }
+    function flatten(array) {
+        return [].concat.apply([], array);
+    }
+    function camelize(str)  {
+        return str.replace(/-+(.)?/g, function(match, chr){
+            return chr ? chr.toUpperCase() : ''
+        })
+    }
+    function uniq(array)    {
+        return array.filter(function(item,index,array){
+            return array.indexOf(item) == index })
+    }
 
     function classRE(name){
         return name in classCache ?
@@ -24,8 +44,8 @@ var Zepto = (function () {
     function defaultDisplay(nodeName) {
         var element, display;
         if (!elementDisplay[nodeName]) {
-            document.body.appendChild(elem);
-            body.insertAdjacentElement("beforeEnd", element);
+            element = document.createElement(nodeName);
+            document.body.insertAdjacentElement("beforeEnd", element);
             display = getComputedStyle(element, '').getPropertyValue("display");
             element.parentNode.removeChild(element);
             display == "none" && (display = "block");
@@ -66,7 +86,7 @@ var Zepto = (function () {
                 selector = null;
             } else if (fragmentRE.test(selector)) {
                 dom = fragment(selector);
-            } else if (selector.nodeType && selector.nodeType == 3) {
+            } else if (selector.nodeType && selector.nodeType == 3) {//text
                 dom = [selector];
             } else {
                 dom = $$(document, selector);
@@ -104,7 +124,9 @@ var Zepto = (function () {
         concat: emptyArray.concat,
 
         ready: function (callback) {
-            if (document.readyState == 'complete' || document.readyState == 'loaded') callback();
+            if (document.readyState == 'complete' || document.readyState == 'loaded') {
+                callback();
+            }
             document.addEventListener('DOMContentLoaded', callback, false);
             return this;
         },
@@ -140,22 +162,24 @@ var Zepto = (function () {
             }));
         },
 
+        add:function(selector, context) {
+            return $(uniq(this.concat($(selector,context))));
+        },
+
         is: function (selector) {
             return this.length > 0 && $(this[0]).filter(selector).length > 0;
         },
 
         not: function(selector) {
             var nodes = [];
-            /*if (isF(selector) && selector.call !== undefined)*/
-
-            if (typeof selector == 'function' && selector.call !== undefined){
+            if (isF(selector) && selector.call !== undefined) {
                 this.each(function(idx) {
                     if (!selector.call(this, idx)) {
                         nodes.push(this);
                     }
                 });
             } else {
-                var ignores = slice.call(typeof selector == 'strin' ?
+                var ignores = slice.call(typeof selector == 'string' ?
                     this.filter(selector) :
                     selector instanceof NodeList ? selector : $(selector));
                 slice.call(this).forEach(function(el){
@@ -182,7 +206,7 @@ var Zepto = (function () {
             if (this.length == 1) {
                 result = $$(this[0], selector);
             } else {
-                result = flatten(this.map(function(el){
+                result = flatten(this.map(function(el) {
                     return $$(el, selector);
                 }));
             }
@@ -280,13 +304,27 @@ var Zepto = (function () {
             })
         },
 
-        replaceWith: function(newContent) {
+        /*replaceWith: function(newContent) {
             return this.each(function() {
                 var element = $(this),
                     prev = element.prev();
                 element.remove();
                 prev.after(newContent);
             });
+        },
+*/
+        wrap: function(newContent) {
+            return this.each(function() {
+                $(this).wrapAll(newContent);
+            });
+        },
+        wrapAll: function(newContent) {
+            if (this[0]) {
+                var wrap = $(newContent)[0].cloneNode();
+                $(this[0]).before(wrap);
+                $(wrap).append(this);
+            }
+            return this;
         },
 
         hide: function(){
@@ -373,8 +411,8 @@ var Zepto = (function () {
             if(this.length==0) return null;
             var obj = this[0].getBoundingClientRect();
             return {
-                left: obj.left + body.scrollLeft,
-                top: obj.top + body.scrollTop,
+                left: obj.left + document.body.scrollLeft,
+                top: obj.top + document.body.scrollTop,
                 width: obj.width,
                 height: obj.height
             };
@@ -452,37 +490,51 @@ var Zepto = (function () {
         }
     });
 
-    var adjacencyOperators = {
+    /*var adjacencyOperators = {
         append: 'beforeEnd',
         prepend: 'afterBegin',
         before: 'beforeBegin',
         after: 'afterEnd'
     };
-    for (key in adjacencyOperators) {
-        $.fn[key] = (function (operator) {
-            return function (html) {
-                return this.each(function(element) {
-                    if (html instanceof Z && html.dom[0]) {
-                        if (html instanceof Z) {
-                            dom = html;
-                            if (operator == 'afterBegin' || operator == 'afterEnd') {
-                                dom.reverse();
-                            }
-                            for (i = 0; i < dom.length; i++) {
-                                element['insertAdjacentElement'](operator, dom[i]);
-                            }
-                        }
-                    } else {
-                        element['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](operator, html);
-                    }
-
-                });
-            };
-        })(adjacencyOperators[key]);
+    function insert(operator, element, other) {
+        var parent = (!operator || operator == 3) ? element : element.parentNode;
+        parent.insertBefore(other,
+            !operator ? parent.firstChild :         // prepend
+                operator == 1 ? element.nextSibling :   // after
+                    operator == 2 ? element :               // before
+                        null);                                  // append
     }
+    /*adjacencyOperators.forEach(function(key, operator) {
+        $.fn[key] = function(html) {
+            if (typeof(html) != 'object')
+                html = fragment(html);
+            return this.each(function(index, element){
+                if (html.length || html instanceof Z) {
+                    dom = html;
+                    for (var i=0; i<dom.length; i++) {
+                        var e = dom[operator < 2 ? dom.length-i-1 : i];
+                        insert(operator, element, e);
+                    }
+                } else {
+                    insert(operator, element, html);
+                }
+            });
+        };
+    });
+*/
+    var reverseAdjacencyOperators = [ 'append', 'prepend' ];
+
+    reverseAdjacencyOperators.forEach(function(key) {
+        $.fn[key+'To'] = function(html){
+            if (typeof(html) != 'object')
+                html = fragment(html);
+
+            html[key](this);
+            return this;
+        };
+    });
 
     Z.prototype = $.fn;
-    $(document).ready(function(){ body = document.body });
 
     return $;
 })();
