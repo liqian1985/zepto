@@ -211,6 +211,15 @@ describe('zepto suite text', function () {
             expect($('li')[1].id).toBe('replaceli');
             expect($('#replaceli').html()).toBe('replaceWith');
         });
+    });
+
+    describe('wrapAll suite text', function () {
+        it('验证wrapAll()', function () {
+            var result = $('.test1');
+            result.wrapAll('<div class="new" />');
+            expect($.fn.wrapAll).toEqual(jasmine.any(Function));
+            //expect(result[0].parentNode).toBe('div');
+        });
     });*/
 
     describe('hide suite text', function () {

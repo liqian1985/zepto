@@ -45,7 +45,7 @@ var Zepto = (function () {
         var element, display;
         if (!elementDisplay[nodeName]) {
             element = document.createElement(nodeName);
-            document.body.insertAdjacentElement("beforeEnd", element);
+            document.body.appendChild(element);
             display = getComputedStyle(element, '').getPropertyValue("display");
             element.parentNode.removeChild(element);
             display == "none" && (display = "block");
@@ -86,6 +86,7 @@ var Zepto = (function () {
                 selector = null;
             } else if (fragmentRE.test(selector)) {
                 dom = fragment(selector);
+                selector = null;
             } else if (selector.nodeType && selector.nodeType == 3) {//text
                 dom = [selector];
             } else {
@@ -122,6 +123,10 @@ var Zepto = (function () {
         push: emptyArray.push,
         indexOf: emptyArray.indexOf,
         concat: emptyArray.concat,
+
+        slice: function() {
+            return $(slice.apply(this, arguments));
+        },
 
         ready: function (callback) {
             if (document.readyState == 'complete' || document.readyState == 'loaded') {
@@ -190,7 +195,7 @@ var Zepto = (function () {
         },
 
         eq: function(idx) {
-            return $(this[idx]);
+            return idx === -1 ? this.slice(idx) : this.slice(idx, + idx + 1);
         },
 
         first: function() {
@@ -304,26 +309,32 @@ var Zepto = (function () {
             })
         },
 
-        /*replaceWith: function(newContent) {
+        replaceWith: function(newContent) {
             return this.each(function() {
-                var element = $(this),
-                    prev = element.prev();
-                element.remove();
-                prev.after(newContent);
+                var par = this.parentNode,
+                    next = this.nextSibling;
+                $(this).remove();
+                //next ? $(next).before(newContent) : $(par).append(newContent);
             });
         },
-*/
+
         wrap: function(newContent) {
             return this.each(function() {
-                $(this).wrapAll(newContent);
+                $(this).wrapAll($(newContent)[0].cloneNode());
             });
         },
         wrapAll: function(newContent) {
             if (this[0]) {
-                var wrap = $(newContent)[0].cloneNode();
-                $(this[0]).before(wrap);
-                $(wrap).append(this);
+                //$(this[0]).before(newContent = $(newContent));
+                newContent.append(this);
             }
+            return this;
+        },
+
+        unwrap: function() {
+            this.parent().each(function() {
+                $(this).replaceWith($(this).children());
+            });
             return this;
         },
 

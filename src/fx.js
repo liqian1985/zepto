@@ -9,7 +9,11 @@
             }
             else {
                 transforms.push(key + '(' + properties[key] + ')');
-                $.isFunction(callback) && this.one('webkitTransitionEnd', callback);
+                if (parseFloat(duration) !== 0) {
+                    $.isFunction(callback) && this.one('webkitTransitionEnd', callback);
+                } else {
+                    setTimeout(callback, 0);
+                }
             }
         }
         return this.css({
