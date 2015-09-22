@@ -32,6 +32,10 @@ var Zepto = (function () {
             return chr ? chr.toUpperCase() : ''
         })
     }
+    function maybeAddPx(name, value) {
+        return (typeof value === "number" && !cssNumber[name]) ? value + "px" : value;
+    }
+
     function uniq(array)    {
         return array.filter(function(item,index,array){
             return array.indexOf(item) == index })
@@ -433,17 +437,17 @@ var Zepto = (function () {
             };
         },
 
-        css: function (prop, value) {
+        css: function (property, value) {
             if (value === undefined && typeof property == 'string') {
                 this[0].style[camelize(property)] ||
                 getComputedStyle(this[0], '').getPropertyValue(property);
             }
             css = '';
-            for (k in prop) {
-                css += k + ':' + prop[k] + ';';
+            for (key in property) {
+                css += key + ':' + maybeAddPx(key, property[key]) + ';';
             }
-            if (typeof prop == 'string') {
-                css = prop + ':' + value;
+            if (typeof property == 'string') {
+                css = property + ":" + maybeAddPx(property, value);
             }
             return this.each(function () {
                 this.style.cssText += ';' + css;
