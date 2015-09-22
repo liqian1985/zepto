@@ -6,7 +6,9 @@ var Zepto = (function () {
         getComputedStyle = document.defaultView.getComputedStyle,
         fragmentRE = /^\s*<[^>]+>/,
         nodeTypeRE = /^1|9|11$/,
-        container = document.createElement('div');
+        container = document.createElement('div'),
+        adjacencyOperators = ['prepend', 'after', 'before', 'append'],
+        reverseAdjacencyOperators = ['append', 'prepend'];
 
     function isF(value) {
         return ({}).toString.call(value) == "[object Function]";
@@ -519,12 +521,7 @@ var Zepto = (function () {
         }
     });
 
-    /*var adjacencyOperators = {
-        append: 'beforeEnd',
-        prepend: 'afterBegin',
-        before: 'beforeBegin',
-        after: 'afterEnd'
-    };
+    /*
     function insert(operator, element, other) {
         var parent = (!operator || operator == 3) ? element : element.parentNode;
         parent.insertBefore(other,
@@ -551,7 +548,6 @@ var Zepto = (function () {
         };
     });
 */
-    var reverseAdjacencyOperators = [ 'append', 'prepend' ];
 
     reverseAdjacencyOperators.forEach(function(key) {
         $.fn[key+'To'] = function(html){

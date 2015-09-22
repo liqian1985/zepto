@@ -8,13 +8,10 @@
     ];
 
     $.fn.anim = function(properties, duration, ease, callback) {
-        var transforms = [],
-            cssProperties = {},
-            key,
-            that = this;
+        var transforms = [], cssProperties = {}, key, that = this, wrappedCallback;
 
         for (key in properties) {
-            if (supportedTransforms.indexOf(key) !== -1) {
+            if (supportedTransforms.indexOf(key) > 0) {
 
                 // Transform rule
                 transforms.push(key + '(' + properties[key] + ')');
@@ -25,7 +22,12 @@
             }
         }
 
-        if (parseFloat(duration) !== 0) {
+        wrappedCallback = function() {
+            that.css({'-webkit-transition': 'none'});
+            callback && callback();
+        }
+
+        if (duration > 0) {
             this.one('webkitTransitionEnd', wrappedCallback);
         } else {
             setTimeout(wrappedCallback, 0);
