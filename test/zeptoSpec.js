@@ -277,8 +277,8 @@ describe('zepto suite text', function () {
             var result = $('div');
             result.text('123');
             expect($.fn.text).toEqual(jasmine.any(Function));
-            expect(result[0].innerText).toBe('123');
-            expect(result[1].innerText).toBe('123');
+            expect(result[0].textContent).toBe('123');
+            expect(result[1].textContent).toBe('123');
             //expect($('span').text()).toBe('spantext');
         });
     });
