@@ -1,9 +1,18 @@
 var Zepto = (function () {
-    var undefined, key, css, $$, classList,
+    var undefined, key, $$, classList,
         emptyArray = [], slice = emptyArray.slice,
         document = window.document,
         elementDisplay = {}, classCache = {},
         getComputedStyle = document.defaultView.getComputedStyle,
+        cssNumber = {
+            'column-count': 1,
+            'columns': 1,
+            'font-weight': 1,
+            'line-height': 1,
+            'opacity': 1,
+            'z-index': 1,
+            'zoom': 1
+        },
         fragmentRE = /^\s*<[^>]+>/,
         nodeTypeRE = /^1|9|11$/,
         container = document.createElement('div'),
@@ -47,10 +56,6 @@ var Zepto = (function () {
             .toLowerCase();
     }
 
-    function maybeAddPx(name, value) {
-        return (typeof value === "number" && !cssNumber[name]) ? value + "px" : value;
-    }
-
     function uniq(array)    {
         return array.filter(function(item,index,array){
             return array.indexOf(item) == index })
@@ -59,6 +64,10 @@ var Zepto = (function () {
     function classRE(name){
         return name in classCache ?
             classCache[name] : (classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)'));
+    }
+
+    function maybeAddPx(name, value) {
+        return (typeof value == "number" && !cssNumber[dasherize(name)]) ? value + "px" : value;
     }
 
     function defaultDisplay(nodeName) {
@@ -457,7 +466,8 @@ var Zepto = (function () {
                 this[0].style[camelize(property)] ||
                 getComputedStyle(this[0], '').getPropertyValue(property);
             }
-            css = '';
+            var css = '';
+
             for (key in property) {
                 css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';';
             }
@@ -492,6 +502,9 @@ var Zepto = (function () {
         },
         removeClass: function (name) {
             return this.each(function(idx) {
+                if(name === undefined) {
+                    return this.className = '';
+                }
                 classList = this.className;
                 funcArg(this,name,idx,classList).split(/\s+/g).forEach(function(klass) {
                     classList = classList.replace(classRE(klass), " ")

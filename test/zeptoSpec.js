@@ -436,11 +436,12 @@ describe('zepto suite text', function () {
     describe('removeClass suite text', function () {
         it('验证$方法返回值中包含removeClass方法', function () {
             var result = $('div');
-            result.removeClass('test0');
+            //result.removeClass('test0');
+            $('.test1').removeClass();
             expect($.fn.removeClass).toEqual(jasmine.any(Function));
             expect(result.length).toBe(2);
-            expect(result[0].className).toBe('');
-            expect(result[1].className).toBe('test1');
+            //expect(result[0].className).toBe('');
+            expect(result[1].className).toBe('');
         });
     });
 
