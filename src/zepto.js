@@ -13,9 +13,11 @@ var Zepto = (function () {
     function isF(value) {
         return ({}).toString.call(value) == "[object Function]";
     }
+
     function isO(value) {
         return value instanceof Object;
     }
+
     function isA(value) {
         return value instanceof Array;
     }
@@ -26,14 +28,25 @@ var Zepto = (function () {
             }
         )
     }
+
     function flatten(array) {
         return [].concat.apply([], array);
     }
+
     function camelize(str)  {
         return str.replace(/-+(.)?/g, function(match, chr){
             return chr ? chr.toUpperCase() : ''
         })
     }
+
+    function dasherize(str) {
+        return str.replace(/::/g, '/')
+            .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+            .replace(/([a-z\d])([A-Z])/g, '$1_$2')
+            .replace(/_/g, '-')
+            .toLowerCase();
+    }
+
     function maybeAddPx(name, value) {
         return (typeof value === "number" && !cssNumber[name]) ? value + "px" : value;
     }
@@ -446,10 +459,10 @@ var Zepto = (function () {
             }
             css = '';
             for (key in property) {
-                css += key + ':' + maybeAddPx(key, property[key]) + ';';
+                css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';';
             }
             if (typeof property == 'string') {
-                css = property + ":" + maybeAddPx(property, value);
+                css = dasherize(property) + ":" + maybeAddPx(property, value);
             }
             return this.each(function () {
                 this.style.cssText += ';' + css;
