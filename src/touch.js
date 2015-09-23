@@ -1,4 +1,3 @@
-/*
 (function($){
     var touch = {},
         touchTimeout;
@@ -60,4 +59,4 @@
 
     });
 })(Zepto);
-*/
+

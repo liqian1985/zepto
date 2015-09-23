@@ -1,10 +1,10 @@
 (function($){
     var $$ = $.qsa,
         handlers = [],
-        zid = 1;
+        _zid = 1;
 
     function zid(element) {
-        return element._zid || (element._zid = zid++);
+        return element._zid || (element._zid = _zid++);
     }
 
     function findHandlers(element, event, fn, selector) {
@@ -47,7 +47,7 @@
     }
 
     function remove(element, events, fn, selector){
-        //var id = zid(element);
+        var id = zid(element);
         (events || '').split(/\s/).forEach(function(event){
             findHandlers(element, event, fn, selector).forEach(function(handler){
                 delete handlers[id][handler.i];
