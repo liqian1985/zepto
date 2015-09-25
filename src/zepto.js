@@ -13,9 +13,13 @@ var Zepto = (function () {
             'z-index': 1,
             'zoom': 1
         },
-        fragmentRE = /^\s*<[^>]+>/,
-        nodeTypeRE = /^1|9|11$/,
-        container = document.createElement('div'),
+        fragmentRE = /^\s*<(\w+)[^>]*>/,
+        elementTypes = [1, 9, 11],
+        containers = {
+            'th': document.createElement('tr'),
+            'td': document.createElement('tr'),
+            '*': document.createElement('div')
+        },
         adjacencyOperators = ['prepend', 'after', 'before', 'append'],
         reverseAdjacencyOperators = ['append', 'prepend'];
 
@@ -83,8 +87,11 @@ var Zepto = (function () {
         return elementDisplay[nodeName];
     }
 
-    function fragment(html) {
-        container.innerHTML = ('' + html).trim();
+    function fragment(html, name) {
+        if (name === undefined) fragmentRE.test(html) && RegExp.$1;
+        if (!(name in containers)) name = '*';
+        var container = containers[name];
+        container.innerHTML = '' + html;
         return slice.call(container.childNodes);
     }
 
@@ -110,11 +117,11 @@ var Zepto = (function () {
             var dom;
             if (isA(selector)) {
                 dom = compact(selector);
-            } else if ((selector.nodeType && nodeTypeRE.test(selector.nodeType)) || selector === window) {
+            } else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window) {
                 dom = [selector];
                 selector = null;
             } else if (fragmentRE.test(selector)) {
-                dom = fragment(selector);
+                dom = fragment(selector, RegExp.$1);
                 selector = null;
             } else if (selector.nodeType && selector.nodeType == 3) {//text
                 dom = [selector];
@@ -178,7 +185,9 @@ var Zepto = (function () {
 
         remove: function () {
             return this.each(function () {
-                this.parentNode.removeChild(el);
+                if (this.parentNode != null) {
+                    this.parentNode.removeChild(this);
+                }
             });
         },
 
@@ -216,11 +225,10 @@ var Zepto = (function () {
                     }
                 });
             } else {
-                var ignores = slice.call(typeof selector == 'string' ?
-                    this.filter(selector) :
-                    selector instanceof NodeList ? selector : $(selector));
-                slice.call(this).forEach(function(el){
-                    if (ignores.indexOf(el) < 0) nodes.push(el);
+                var excludes = typeof selector == 'string' ? this.filter(selector) :
+                    ('length' in selector && isF(selector.item)) ? slice.call(selector) : $(selector);
+                this.forEach(function (el) {
+                    if (excludes.indexOf(el) < 0) nodes.push(el);
                 });
             }
             return $(nodes);
@@ -352,7 +360,7 @@ var Zepto = (function () {
 
         wrap: function(newContent) {
             return this.each(function() {
-                $(this).wrapAll($(newContent)[0].cloneNode());
+                $(this).wrapAll($(newContent)[0].cloneNode(false));
             });
         },
         wrapAll: function(newContent) {
@@ -362,9 +370,8 @@ var Zepto = (function () {
             }
             return this;
         },
-
-        unwrap: function() {
-            this.parent().each(function() {
+        unwrap: function(){
+            this.parent().each(function(){
                 $(this).replaceWith($(this).children());
             });
             return this;
@@ -374,8 +381,8 @@ var Zepto = (function () {
             return this.css("display", "none");
         },
 
-        toggle: function(){
-            return this.css("display") == "none" ? this.show() : this.hide();
+        toggle: function(setting){
+            return (setting === undefined ? this.css("display") == "none" : setting) ? this.show() : this.hide();
         },
 
         prev: function () {
@@ -484,7 +491,11 @@ var Zepto = (function () {
         },
 
         hasClass: function (name) {
-            return classRE(name).test(this[0].className);
+            if (this.length < 1) {
+                return false;
+            } else {
+                return classRE(name).test(this[0].className);
+            }
         },
 
         addClass: function (name) {
@@ -547,33 +558,31 @@ var Zepto = (function () {
         }
     });
 
-    /*
-    function insert(operator, element, other) {
-        var parent = (!operator || operator == 3) ? element : element.parentNode;
-        parent.insertBefore(other,
+
+    function insert(operator, target, node) {
+        var parent = (!operator || operator == 3) ? target : target.parentNode;
+        parent.insertBefore(node,
             !operator ? parent.firstChild :         // prepend
-                operator == 1 ? element.nextSibling :   // after
-                    operator == 2 ? element :               // before
+                operator == 1 ? target.nextSibling :    // after
+                    operator == 2 ? target :                // before
                         null);                                  // append
     }
-    /*adjacencyOperators.forEach(function(key, operator) {
+    adjacencyOperators.forEach(function(key, operator) {
         $.fn[key] = function(html) {
-            if (typeof(html) != 'object')
-                html = fragment(html);
-            return this.each(function(index, element){
-                if (html.length || html instanceof Z) {
-                    dom = html;
-                    for (var i=0; i<dom.length; i++) {
-                        var e = dom[operator < 2 ? dom.length-i-1 : i];
-                        insert(operator, element, e);
-                    }
-                } else {
-                    insert(operator, element, html);
+            var nodes = typeof(html) == 'object' ? html : fragment(html);
+            if (!('length' in nodes)) nodes = [nodes];
+            if (nodes.length < 1) return this;
+            var size = this.length, copyByClone = size > 1, inReverse = operator < 2;
+
+            return this.each(function(index, target){
+                for (var i = 0; i < nodes.length; i++) {
+                    var node = nodes[inReverse ? nodes.length-i-1 : i];
+                    if (copyByClone && index < size - 1) node = node.cloneNode(true);
+                    insert(operator, target, node);
                 }
             });
         };
     });
-*/
 
     reverseAdjacencyOperators.forEach(function(key) {
         $.fn[key+'To'] = function(html){

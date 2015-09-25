@@ -213,7 +213,7 @@ describe('zepto suite text', function () {
         });
     });
 
-    describe('wrapAll suite text', function () {
+    /*describe('wrapAll suite text', function () {
         it('验证wrapAll()', function () {
             var result = $('.test1');
             result.wrapAll('<div class="new" />');
