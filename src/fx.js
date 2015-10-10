@@ -1,9 +1,9 @@
 (function($, undefined){
     var supportedTransforms = [
-        'scale',     'scaleX',     'scaleY',
+        'scale', 'scaleX', 'scaleY',
         'translate', 'translateX', 'translateY', 'translate3d',
         'skew',      'skewX',      'skewY',
-        'rotate',    'rotateX',    'rotateY',    'rotateZ',
+        'rotate',    'rotateX',    'rotateY',    'rotateZ',    'rotate3d',
         'matrix'
     ];
 
@@ -11,11 +11,8 @@
         var transforms = [], cssProperties = {}, key, that = this, wrappedCallback;
 
         for (key in properties) {
-            if (supportedTransforms.indexOf(key) > 0) {
-
-                // Transform rule
+            if (supportedTransforms.indexOf(key)>=0) {
                 transforms.push(key + '(' + properties[key] + ')');
-
             } else {
                 // CSS property
                 cssProperties[key] = properties[key];
@@ -32,12 +29,18 @@
         } else {
             setTimeout(wrappedCallback, 0);
         }
+        if (transforms.length > 0) {
+            cssProperties['-webkit-transform'] = transforms.join(' ')
+        }
 
-        return this.css(
-            $.extend({
-                '-webkit-transition': 'all ' + (duration !== undefined ? duration : 0.5) + 's ' + (ease || ''),
-                '-webkit-transform': transforms.join(' ')
-            }, cssProperties)
-        );
+        cssProperties['-webkit-transition'] = 'all ' + (duration !== undefined ? duration : 0.5) + 's ' + (ease || '');
+
+
+        setTimeout(function () {
+            that.css(cssProperties);
+        }, 0);
+
+        return this;
+
     }
 })(Zepto);

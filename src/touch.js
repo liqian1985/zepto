@@ -14,6 +14,13 @@
             return (y1 - y2 > 0 ? 'Up' : 'Down');
         }
     }
+    var longTapDelay = 750;
+    function longTap(){
+        if (touch.last && (Date.now() - touch.last >= longTapDelay)) {
+            $(touch.target).trigger('longTap');
+            touch = {};
+        }
+    }
 
     $(document).ready(function() {
         $(document.body).bind('touchstart', function(e) {
@@ -28,6 +35,7 @@
                 touch.isDoubleTap = true;
             }
             touch.last = now;
+            setTimeout(longTap, longTapDelay);
         }).bind('touchmove', function(e) {
             touch.x2 = e.touches[0].pageX;
             touch.y2 = e.touches[0].pageY;
@@ -52,7 +60,7 @@
         });
     });
 
-    ['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown', 'doubleTap', 'tap'].forEach(function(m){
+    ['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown', 'doubleTap', 'tap', 'longTap'].forEach(function(m) {
         $.fn[m] = function(callback) {
             return this.bind(m, callback);
         }
