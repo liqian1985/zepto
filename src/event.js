@@ -1,4 +1,4 @@
-(function($){
+(function($) {
     var $$ = $.qsa,
         handlers = [],
         _zid = 1;
@@ -34,10 +34,10 @@
             ns.replace(' ', ' .* ?') + '(?: |$)');
     }
 
-    function add(element, events, fn, selector, delegate){
+    function add(element, events, fn, selector, delegate) {
         var id = zid(element),
             set = (handlers[id] || (handlers[id] = []));
-        events.split(/\s/).forEach(function(event){
+        events.split(/\s/).forEach(function(event) {
             var callback = delegate || fn;
             var proxyfn = function (event) {
                 var result = callback.apply(element, [event].concat(event.data));
@@ -47,16 +47,18 @@
                 return result;
             };
 
-            var handler = $.extend(parse(event), {fn: fn, proxy: proxyfn, sel: selector, del: delegate, i: set.length});
+            var handler = $.extend(parse(event), {
+                fn: fn, proxy: proxyfn, sel: selector, del: delegate, i: set.length
+            });
             set.push(handler);
             element.addEventListener(handler.e, proxyfn, false);
         });
     }
 
-    function remove(element, events, fn, selector){
+    function remove(element, events, fn, selector) {
         var id = zid(element);
-        (events || '').split(/\s/).forEach(function(event){
-            findHandlers(element, event, fn, selector).forEach(function(handler){
+        (events || '').split(/\s/).forEach(function(event) {
+            findHandlers(element, event, fn, selector).forEach(function(handler) {
                 delete handlers[id][handler.i];
                 element.removeEventListener(handler.e, handler.proxy, false);
             });
@@ -65,8 +67,8 @@
 
     $.event = { add: add, remove: remove }
 
-    $.fn.bind = function(event, callback){
-        return this.each(function(){
+    $.fn.bind = function(event, callback) {
+        return this.each(function() {
             add(this, event, callback);
         });
     };
@@ -109,9 +111,12 @@
 
     $.fn.delegate = function(selector, event, callback) {
         return this.each(function(i, element) {
-            add(element, event, callback, selector, function(e, data){
-                var target = e.target, nodes = $$(element, selector);
-                while (target && nodes.indexOf(target) < 0) target = target.parentNode;
+            add(element, event, callback, selector, function(e, data) {
+                var target = e.target,
+                    nodes = $$(element, selector);
+                while (target && nodes.indexOf(target) < 0) {
+                    target = target.parentNode;
+                }
                 if (target && !(target === element) && !(target === document)) {
                     callback.call(target, $.extend(createProxy(e), {
                         currentTarget: target, liveFired: element
@@ -132,27 +137,33 @@
         return this;
     };
 
-    $.fn.die = function(event, callback){
+    $.fn.die = function(event, callback) {
         $(document.body).undelegate(this.selector, event, callback);
         return this;
     };
 
     $.fn.trigger = function(event, data) {
-        if (typeof event == 'string') event = $.Event(event);
+        if (typeof event == 'string') {
+            event = $.Event(event);
+        }
         event.data = data;
-        return this.each(function(){ this.dispatchEvent(event) });
+        return this.each(function() {
+            this.dispatchEvent(event);
+        });
     };
 
     // triggers event handlers on current element just as if an event occurred,
     // doesn't trigger an actual event, doesn't bubble
-    $.fn.triggerHandler = function(event, data){
+    $.fn.triggerHandler = function(event, data) {
         var e, result;
-        this.each(function(i, element){
+        this.each(function(i, element) {
             e = createProxy(typeof event == 'string' ? $.Event(event) : event);
             e.data = data; e.target = element;
-            $.each(findHandlers(element, event.type || event), function(i, handler){
+            $.each(findHandlers(element, event.type || event), function(i, handler) {
                 result = handler.proxy(e);
-                if (e.isImmediatePropagationStopped()) return false;
+                if (e.isImmediatePropagationStopped()) {
+                    return false;
+                }
             });
         });
         return result;
@@ -167,15 +178,21 @@
 
     ['focus', 'blur'].forEach(function(name) {
         $.fn[name] = function(callback) {
-            if (callback) this.bind(name, callback);
-            else if (this.length) try { this.get(0)[name]() } catch(e){};
+            if (callback) {
+                this.bind(name, callback);
+            } else if (this.length) {
+                try { this.get(0)[name]() }
+                catch(e) {};
+            }
             return this;
         };
     });
 
     $.Event = function(type, props) {
         var event = document.createEvent('Events');
-        if (props) $.extend(event, props);
+        if (props) {
+            $.extend(event, props);
+        }
         event.initEvent(type, !(props && props.bubbles === false), true);
         return event;
     };

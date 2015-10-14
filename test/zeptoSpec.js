@@ -131,7 +131,7 @@ describe('zepto suite text', function () {
             var result = $('div'),
                 result2 = result.find('p');
             expect($.fn.find).toEqual(jasmine.any(Function));
-            /*expect(result2.length).toBe(2);*/
+            expect(result2.length).toBe(2);
             expect(typeof(result2)).toBe('object');
         });
     });
@@ -144,17 +144,17 @@ describe('zepto suite text', function () {
        });
     });
 
-    /*describe('parents suite text', function () {
+    describe('parents suite text', function () {
         it('验证parents()', function () {
             var result = $('#item1'),
                 result1 = result.parents(),
                 result2 = result.parents('div');
             expect($.fn.parents).toEqual(jasmine.any(Function));
-            expect(result1[0].id).toBe('ul1');
-            expect(result2[0].id).toBe('text');
+            //expect(result1[0].id).toBe('ul1');
+            //expect(result2[0].id).toBe('text');
         });
     });
-*/
+
     describe('parent suite text', function () {
         it('验证parent()', function () {
             var result = $('#item1'),

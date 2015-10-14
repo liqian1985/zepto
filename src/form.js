@@ -1,7 +1,3 @@
-//     Zepto.js
-//     (c) 2010, 2011 Thomas Fuchs
-//     Zepto.js may be freely distributed under the MIT license.
-
 (function ($) {
 
     // Awesome code here
@@ -21,13 +17,12 @@
     //             value: '123456'
     //         }
     //     ]
-    //
     $.fn.serializeArray = function () {
         var result = [],
             el;
-        $( Array.prototype.slice.call(this.get(0).elements) ).each(function () {
+        $(Array.prototype.slice.call(this.get(0).elements) ).each(function () {
             el = $(this);
-            if ( (el.attr('type') !== 'radio' || el.is(':checked')) && !(el.attr('type') === 'checkbox' && !el.is(':checked'))) {
+            if ((el.attr('type') !== 'radio' || el.is(':checked')) && !(el.attr('type') === 'checkbox' && !el.is(':checked'))) {
                 result.push({
                     name: el.attr('name'),
                     value: el.val()
@@ -52,26 +47,21 @@
     $.fn.serialize = function () {
         var result = [];
         this.serializeArray().forEach(function (elm) {
-            result.push( encodeURIComponent(elm.name) + '=' + encodeURIComponent(elm.value) );
+            result.push(encodeURIComponent(elm.name) + '=' + encodeURIComponent(elm.value));
         });
         return result.join('&');
     };
     // ### $.fn.submit
     //
     // Bind or trigger the submit event for a form
-
     // *Example:*
     // To bind a handler for the submit event:
-    //
     //     $('#login_form').submit(function (e) {
     //         alert('Form was submitted!');
     //         e.preventDefault();
     //     });
-    //
     // To trigger form submit:
-    //
-    //     $('#login_form').submit();
-    //
+    // $('#login_form').submit();
     $.fn.submit = function (callback) {
         if (callback) this.bind('submit', callback)
         else if (this.length) {
@@ -81,8 +71,6 @@
         }
         return this;
     }
-
-
 })(Zepto);
 
 

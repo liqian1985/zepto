@@ -11,7 +11,7 @@
         var transforms = [], cssProperties = {}, key, that = this, wrappedCallback;
 
         for (key in properties) {
-            if (supportedTransforms.indexOf(key)>=0) {
+            if (supportedTransforms.indexOf(key) >= 0) {
                 transforms.push(key + '(' + properties[key] + ')');
             } else {
                 // CSS property

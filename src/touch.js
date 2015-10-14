@@ -6,8 +6,9 @@
         return 'tagName' in node ? node : node.parentNode;
     }
 
-    function swipeDirection(x1, x2, y1, y2){
-        var xDelta = Math.abs(x1 - x2), yDelta = Math.abs(y1 - y2);
+    function swipeDirection(x1, x2, y1, y2) {
+        var xDelta = Math.abs(x1 - x2),
+            yDelta = Math.abs(y1 - y2);
         if (xDelta >= yDelta) {
             return (x1 - x2 > 0 ? 'Left' : 'Right');
         } else {
@@ -15,7 +16,7 @@
         }
     }
     var longTapDelay = 750;
-    function longTap(){
+    function longTap() {
         if (touch.last && (Date.now() - touch.last >= longTapDelay)) {
             $(touch.target).trigger('longTap');
             touch = {};

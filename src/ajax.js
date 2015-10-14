@@ -8,18 +8,20 @@
     $.ajaxJSONP = function(options) {
         var jsonpString = 'jsonp' + ++jsonpID,
             script = document.createElement('script');
-        window[jsonpString] = function(data){
+        window[jsonpString] = function(data) {
             options.success(data);
             delete window[jsonpString];
         };
         script.src = options.url.replace(/=\?/, '=' + jsonpString);
-
         $('head').append(script);
     };
 
     $.ajaxSettings = {
         type: 'GET',
-        beforeSend: empty, success: empty, error: empty, complete: empty,
+        beforeSend: empty,
+        success: empty,
+        error: empty,
+        complete: empty,
         accepts: {
             script: 'text/javascript, application/javascript',
             json:   'application/json',
@@ -29,29 +31,33 @@
         }
     };
 
-    $.ajax = function(options){
-        // { type, url, data, success, dataType, contentType }
+    $.ajax = function(options) {
         options = options || {};
-
         var settings = $.extend({}, options);
         for (key in $.ajaxSettings) {
-            if (!settings[key]) settings[key] = $.ajaxSettings[key];
+            if (!settings[key]) {
+                settings[key] = $.ajaxSettings[key];
+            }
         }
-
         if (options.url && /=\?/.test(options.url)) {
             return $.ajaxJSONP(options);
         }
 
-        if (!settings.url) settings.url = window.location.toString();
-        if (settings.data && !settings.contentType) settings.contentType = "application/x-www-form-urlencoded";
-        if (isObject(settings.data)) settings.data = $.param(settings.data);
+        if (!settings.url) {
+            settings.url = window.location.toString();
+        }
+        if (settings.data && !settings.contentType) {
+            settings.contentType = "application/x-www-form-urlencoded";
+        }
+        if (isObject(settings.data)) {
+            settings.data = $.param(settings.data);
+        }
         if (settings.type.match(/get/i) && settings.data) {
             var queryString = settings.data;
-
             if (settings.url.match(/\?.*=/)) {
                 queryString = '&' + queryString;
             } else if (queryString[0] != '?') {
-            queryString = '?' + queryString;
+                queryString = '?' + queryString;
             }
             settings.url += queryString;
         }
@@ -59,8 +65,12 @@
         var mime = settings.accepts[settings.dataType],
             xhr = new XMLHttpRequest();
 
-        settings.headers = $.extend({'X-Requested-With': 'XMLHttpRequest'}, settings.headers || {});
-        if (mime) settings.headers['Accept'] = mime;
+        settings.headers = $.extend(
+            {'X-Requested-With': 'XMLHttpRequest'}, settings.headers || {}
+        );
+        if (mime) {
+            settings.headers['Accept'] = mime;
+        }
 
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
@@ -90,9 +100,12 @@
             xhr.abort();
             return false;
         }
-
-        if (settings.contentType) settings.headers['Content-Type'] = settings.contentType;
-        for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name]);
+        if (settings.contentType) {
+            settings.headers['Content-Type'] = settings.contentType;
+        }
+        for (name in settings.headers) {
+            xhr.setRequestHeader(name, settings.headers[name]);
+        }
         xhr.send(settings.data);
         return xhr;
     };
@@ -104,7 +117,11 @@
         });
     };
     $.post = function(url, data, success, dataType) {
-        if ($.isFunction(data)) dataType = dataType || success, success = data, data = null;
+        if ($.isFunction(data)) {
+            dataType = dataType || success,
+                success = data,
+                data = null;
+        }
         $.ajax({
             type: 'POST',
             url: url,
@@ -122,7 +139,7 @@
         })
     };
 
-    $.fn.load = function(url, success){
+    $.fn.load = function(url, success) {
         var self = this,
             parts = url.split(/\s/),
             selector;
@@ -133,7 +150,6 @@
             url = parts[0];
             selector = parts[1];
         }
-
         $.get(url, function(response) {
             self.html(selector ?
                 $(document.createElement('div')).html(response).find(selector).html()
@@ -143,19 +159,21 @@
         return this;
     };
 
-    $.param = function(obj, v){
-        var result = [], add = function(key, value){
+    $.param = function(obj, v) {
+        var result = [],
+            add = function(key, value){
                 result.push(encodeURIComponent(v ? v + '[' + key + ']' : key)
                     + '=' + encodeURIComponent(value));
             },
             isObjArray = $.isArray(obj);
 
-        for(key in obj)
-            if(isObject(obj[key]))
+        for (key in obj) {
+            if (isObject(obj[key])) {
                 result.push($.param(obj[key], (v ? v + '[' + key + ']' : key)));
-            else
+            } else {
                 add(isObjArray ? '' : key, obj[key]);
-
+            }
+        }
         return result.join('&').replace('%20', '+');
     };
 })(Zepto);
