@@ -22,13 +22,18 @@
         success: empty,
         error: empty,
         complete: empty,
+        // Transport
+        xhr: function () {
+            return new window.XMLHttpRequest();
+        },
         accepts: {
             script: 'text/javascript, application/javascript',
             json:   'application/json',
             xml:    'application/xml, text/xml',
             html:   'text/html',
             text:   'text/plain'
-        }
+        },
+        timeout: 0
     };
 
     $.ajax = function(options) {
@@ -63,7 +68,7 @@
         }
 
         var mime = settings.accepts[settings.dataType],
-            xhr = new XMLHttpRequest();
+            xhr = $.ajaxSettings.xhr();
 
         settings.headers = $.extend(
             {'X-Requested-With': 'XMLHttpRequest'}, settings.headers || {}
@@ -77,7 +82,7 @@
                 var result,
                     error = false;
                 if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 0) {
-                    if (mime == 'application/json' && !(xhr.responseText == '')) {
+                    if (mime == 'application/json' && !(/^\s*$/.test(xhr.responseText))) {
                         try { result = JSON.parse(xhr.responseText); }
                         catch (e) { error = e; }
                     } else {
@@ -96,17 +101,27 @@
             }
         }
         xhr.open(settings.type, settings.url, true);
-        if (settings.beforeSend(xhr, settings) === false) {
-            xhr.abort();
-            return false;
-        }
+
         if (settings.contentType) {
             settings.headers['Content-Type'] = settings.contentType;
         }
         for (name in settings.headers) {
             xhr.setRequestHeader(name, settings.headers[name]);
         }
-        xhr.send(settings.data);
+        var sendRequest = function () {
+            if (settings.beforeSend(xhr, settings) === false) {
+                xhr.abort();
+                return false;
+            }
+            xhr.send(settings.data);
+        };
+
+        if (settings.timeout > 0) {
+            setTimeout(sendRequest, settings.timeout);
+        } else if (sendRequest() === false) {
+            return false;
+        }
+
         return xhr;
     };
 
@@ -160,20 +175,20 @@
     };
 
     $.param = function(obj, v) {
-        var result = [],
+        var isArray = $.isArray(obj), result = [],
             add = function(key, value){
                 result.push(encodeURIComponent(v ? v + '[' + key + ']' : key)
                     + '=' + encodeURIComponent(value));
-            },
-            isObjArray = $.isArray(obj);
-
-        for (key in obj) {
-            if (isObject(obj[key])) {
-                result.push($.param(obj[key], (v ? v + '[' + key + ']' : key)));
-            } else {
-                add(isObjArray ? '' : key, obj[key]);
+            };
+        $.each(obj, function(key, value) {
+            if (isArray) {
+                if (v) add('', value);
+                else add(value.name, value.value);
             }
-        }
+            else if (isObject(value))
+                result.push($.param(value, (v ? v + '[' + key + ']' : key)));
+            else add(key, value);
+        });
         return result.join('&').replace('%20', '+');
     };
 })(Zepto);

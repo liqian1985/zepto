@@ -1,7 +1,7 @@
 (function($) {
-    var $$ = $.qsa,
-        handlers = [],
-        _zid = 1;
+    var $$ = $.qsa, handlers = {}, _zid = 1, specialEvents={};
+
+    specialEvents.click = specialEvents.mousedown = specialEvents.mouseup = specialEvents.mousemove = 'MouseEvents';
 
     function zid(element) {
         return element._zid || (element._zid = _zid++);
@@ -108,6 +108,17 @@
         })
         return proxy;
     }
+    // emulates the 'defaultPrevented' property for browsers that have none
+    function fix(event) {
+        if (!('defaultPrevented' in event)) {
+            event.defaultPrevented = false;
+            var prevent = event.preventDefault;
+            event.preventDefault = function() {
+                this.defaultPrevented = true;
+                prevent.call(this);
+            }
+        }
+    }
 
     $.fn.delegate = function(selector, event, callback) {
         return this.each(function(i, element) {
@@ -118,7 +129,7 @@
                     target = target.parentNode;
                 }
                 if (target && !(target === element) && !(target === document)) {
-                    callback.call(target, $.extend(createProxy(e), {
+                    return callback.call(target, $.extend(createProxy(e), {
                         currentTarget: target, liveFired: element
                     }), data);
                 }
@@ -146,6 +157,7 @@
         if (typeof event == 'string') {
             event = $.Event(event);
         }
+        fix(event);
         event.data = data;
         return this.each(function() {
             this.dispatchEvent(event);
@@ -189,11 +201,12 @@
     });
 
     $.Event = function(type, props) {
-        var event = document.createEvent('Events');
+        var event = document.createEvent(specialEvents[type]||'Events');
+
         if (props) {
             $.extend(event, props);
         }
-        event.initEvent(type, !(props && props.bubbles === false), true);
+        event.initEvent(type, !(props && props.bubbles === false), true, null, null, null, null, null, null, null, null, null, null, null, null);
         return event;
     };
 })(Zepto);

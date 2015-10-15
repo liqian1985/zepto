@@ -143,7 +143,7 @@ var Zepto = (function () {
                 dom = [selector];
                 selector = null;
             } else if (fragmentRE.test(selector)) {
-                dom = fragment(selector, RegExp.$1);
+                dom = fragment(selector.trim(), RegExp.$1);
                 selector = null;
             } else if (selector.nodeType && selector.nodeType == 3) {//text
                 dom = [selector];
@@ -278,7 +278,7 @@ var Zepto = (function () {
 
         filter: function (selector) {
             return $([].filter.call(this, function(element) {
-                return $$(element.parentNode, selector).indexOf(element) >= 0;
+                return element.parentNode && $$(element.parentNode, selector).indexOf(element) >= 0;
             }));
         },
 
@@ -497,26 +497,16 @@ var Zepto = (function () {
         },
 
         attr: function (name, value) {
-            if (typeof name == 'string' && value === undefined) {
-                if (this.length > 0 && this[0].nodeName === 'INPUT' && this[0].type === 'text' && name === 'value') {
-                    return this.val();
-                } else if (this.length > 0) {
-                    return this[0].getAttribute(name) || (name in this[0] ? this[0][name] : undefined);
-                } else {
-                    return null;
-                }
-
-            } else {
-                this.each(function(idx) {
-                    if (isO(name)) {
-                        for (key in name) {
-                            this.setAttribute(key, name[key]);
-                        }
-                    } else {
-                        this.setAttribute(name, funcArg(this,value,idx,this.getAttribute(name)));
-                    }
+            var res;
+            return (typeof name == 'string' && value === undefined) ?
+                (this.length == 0 ? undefined :
+                        (name == 'value' && this[0].nodeName == 'INPUT') ? this.val() :
+                            (!(res = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : res
+                ) :
+                this.each(function(idx){
+                    if (isO(name)) for (key in name) this.setAttribute(key, name[key])
+                    else this.setAttribute(name, funcArg(this, value, idx, this.getAttribute(name)));
                 });
-            }
         },
 
         removeAttr: function(name) {
@@ -554,8 +544,11 @@ var Zepto = (function () {
 
         css: function (property, value) {
             if (value === undefined && typeof property == 'string') {
-                this[0].style[camelize(property)] ||
-                getComputedStyle(this[0], '').getPropertyValue(property);
+                return(
+                    this.length == 0
+                        ? undefined
+                        : this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property)
+                );
             }
             var css = '';
             for (key in property) {
