@@ -523,9 +523,9 @@ var Zepto = (function () {
             if (value === undefined) {
                 return (this.length > 0 ? this[0].value : null);
             } else {
-                return this.each(function() {
-                    this.value = value;
-                });
+                return this.each(function(idx) {
+                    this.value = funcArg(this, value, idx, this.value);
+                }
             }
         },
 
