@@ -286,6 +286,10 @@ var Zepto = (function () {
             return this.prevObject || $();
         },
 
+        andSelf:function() {
+            return this.add(this.prevObject || $());
+        },
+
         add:function(selector, context) {
             return $(uniq(this.concat($(selector,context))));
         },
@@ -525,7 +529,7 @@ var Zepto = (function () {
             } else {
                 return this.each(function(idx) {
                     this.value = funcArg(this, value, idx, this.value);
-                }
+                });
             }
         },
 
