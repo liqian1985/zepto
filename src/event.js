@@ -34,16 +34,20 @@
             ns.replace(' ', ' .* ?') + '(?: |$)');
     }
 
-    function add(element, events, fn, selector, delegate) {
-        var id = zid(element),
+    function eachEvent(events, fn, iterator){
+        if ($.isObject(events)) $.each(events, iterator);
+        else events.split(/\s/).forEach(function(type){ iterator(type, fn) });
+    }
+
+    function add(element, events, fn, selector, getDelegate){
+        id = zid(element),
             set = (handlers[id] || (handlers[id] = []));
-        events.split(/\s/).forEach(function(event) {
-            var callback = delegate || fn;
+        eachEvent(events, fn, function(event, fn){
+            var delegate = getDelegate && getDelegate(fn, event),
+                callback = delegate || fn;
             var proxyfn = function (event) {
                 var result = callback.apply(element, [event].concat(event.data));
-                if (result === false) {
-                    event.preventDefault();
-                }
+                if (result === false) event.preventDefault();
                 return result;
             };
 
@@ -57,7 +61,7 @@
 
     function remove(element, events, fn, selector) {
         var id = zid(element);
-        (events || '').split(/\s/).forEach(function(event) {
+        eachEvent(events || '', fn, function(event, fn){
             findHandlers(element, event, fn, selector).forEach(function(handler) {
                 delete handlers[id][handler.i];
                 element.removeEventListener(handler.e, handler.proxy, false);
@@ -80,11 +84,13 @@
     };
 
     $.fn.one = function(event, callback) {
-        return this.each(function() {
-            var self = this;
-            add(this, event, function wrapper(evt) {
-                callback.call(self, evt);
-                remove(self, event, arguments.callee);
+        return this.each(function(i, element){
+            add(this, event, callback, null, function(fn, type){
+                return function(){
+                    var result = fn.apply(element, arguments);
+                    remove(element, type, fn);
+                    return result;
+                }
             });
         });
     };
@@ -122,16 +128,13 @@
 
     $.fn.delegate = function(selector, event, callback) {
         return this.each(function(i, element) {
-            add(element, event, callback, selector, function(e, data) {
-                var target = e.target,
-                    nodes = $$(element, selector);
-                while (target && nodes.indexOf(target) < 0) {
-                    target = target.parentNode;
-                }
-                if (target && !(target === element) && !(target === document)) {
-                    return callback.call(target, $.extend(createProxy(e), {
-                        currentTarget: target, liveFired: element
-                    }), data);
+            add(element, event, callback, selector, function(fn){
+                return function(e){
+                    var args = arguments;
+                    $(e.target).closest(selector, element).each(function() {
+                        var evt = $.extend(createProxy(e), {currentTarget: this, liveFired: element});
+                        return fn.apply(this, [evt].concat([].slice.call(args, 1)));
+                    })
                 }
             });
         });
@@ -201,12 +204,9 @@
     });
 
     $.Event = function(type, props) {
-        var event = document.createEvent(specialEvents[type]||'Events');
-
-        if (props) {
-            $.extend(event, props);
-        }
-        event.initEvent(type, !(props && props.bubbles === false), true, null, null, null, null, null, null, null, null, null, null, null, null);
+        var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true;
+        if (props) for (var name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name]);
+        event.initEvent(type, bubbles, true, null, null, null, null, null, null, null, null, null, null, null, null);
         return event;
     };
 })(Zepto);

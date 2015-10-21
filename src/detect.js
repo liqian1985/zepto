@@ -1,13 +1,17 @@
 (function ($) {
     function detect(ua) {
-        var ua = ua,
-            os = {},
+        var os = (this.os = {}), browser = (this.browser = {}),
+            webkit = ua.match(/WebKit\/([\d.]+)/),
             android = ua.match(/(Android)\s+([\d.]+)/),
             ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
             iphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
             webos = ua.match(/(webOS|hpwOS)[\s\/]([\d.]+)/),
             touchpad = webos && ua.match(/TouchPad/),
             blackberry = ua.match(/(BlackBerry).*Version\/([\d.]+)/);
+
+        if (webkit) browser.version = webkit[1];
+        browser.webkit = !!webkit;
+
         if (android) {
             os.android = true;
             os.version = android[2];
@@ -31,12 +35,17 @@
             os.blackberry = true;
             os.version = blackberry[2];
         }
-        return os;
     }
-    //$.os = detect(navigator.userAgent);
+    // ### $.browser
+    //
+    // *Example:*
+    //
+    //     $.browser.webkit  // => true if the browser is WebKit-based
+    //     $.browser.version // => WebKit version string
+    detect.call($, navigator.userAgent);
+
+    // make available to unit tests
     $.__detect = detect;
-    var v = navigator.userAgent.match(/WebKit\/([\d.]+)/);
-    $.browser = v ? { webkit: true, version: v[1] } : { webkit: false };
 
 })(Zepto);
 
