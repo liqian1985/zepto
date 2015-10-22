@@ -1,11 +1,26 @@
 (function($, undefined){
-    var supportedTransforms = [
-        'scale', 'scaleX', 'scaleY',
-        'translate', 'translateX', 'translateY', 'translate3d',
-        'skew',      'skewX',      'skewY',
-        'rotate',    'rotateX',    'rotateY',    'rotateZ',    'rotate3d',
-        'matrix'
-    ];
+    var prefix = '', eventPrefix, endEventName, endAnimationName,
+        vendors = {Webkit: 'webkit', Moz: '', O: 'o', ms: 'MS'},
+        document = window.document, testEl = document.createElement('div'),
+        supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i;
+
+    function downcase(str) { return str.toLowerCase() }
+    function normalizeEvent(name) { return eventPrefix ? eventPrefix + name : downcase(name) };
+
+    $.each(vendors, function(vendor, event){
+        if (testEl.style[vendor + 'TransitionProperty'] !== undefined) {
+            prefix = '-' + downcase(vendor) + '-';
+            eventPrefix = event;
+            return false;
+        }
+    });
+
+    $.fx = {
+        off: false,
+        cssPrefix: prefix,
+        transitionEnd: normalizeEvent('TransitionEnd'),
+        animationEnd: normalizeEvent('AnimationEnd')
+    };
 
     $.fn.anim = function(properties, duration, ease, callback) {
         var transforms = [],

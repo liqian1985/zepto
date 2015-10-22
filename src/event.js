@@ -128,13 +128,15 @@
 
     $.fn.delegate = function(selector, event, callback) {
         return this.each(function(i, element) {
-            add(element, event, callback, selector, function(fn){
-                return function(e){
-                    var args = arguments;
-                    $(e.target).closest(selector, element).each(function() {
-                        var evt = $.extend(createProxy(e), {currentTarget: this, liveFired: element});
-                        return fn.apply(this, [evt].concat([].slice.call(args, 1)));
-                    })
+            add(element, event, callback, selector, function(fn) {
+                return function(e) {
+                    var evt, match = $(e.target).closest(selector, element).get(0);
+                    if (match) {
+                        evt = $.extend(createProxy(e), {
+                            currentTarget: match, liveFired: element
+                        });
+                        return fn.apply(match, [evt].concat([].slice.call(arguments, 1)));
+                    }
                 }
             });
         });
@@ -154,6 +156,15 @@
     $.fn.die = function(event, callback) {
         $(document.body).undelegate(this.selector, event, callback);
         return this;
+    };
+
+    $.fn.on = function(event, selector, callback){
+        return selector === undefined || $.isFunction(selector) ?
+            this.bind(event, selector) : this.delegate(selector, event, callback);
+    };
+    $.fn.off = function(event, selector, callback){
+        return selector === undefined || $.isFunction(selector) ?
+            this.unbind(event, selector) : this.undelegate(selector, event, callback);
     };
 
     $.fn.trigger = function(event, data) {
